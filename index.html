@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Budget-Planner</title>
+<title>631 預算規劃</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -126,24 +126,25 @@ border-radius: 50%;
 
 .seg {
 display: flex;
-border: 1px solid var(–rule);
-border-radius: 2px;
-padding: 2px;
+background: rgba(31, 30, 29, 0.06);
+border-radius: 10px;
+padding: 3px;
 }
 .seg-btn {
 flex: 1;
 text-align: center;
 padding: 8px 0;
-font-size: 12px;
-letter-spacing: 0.06em;
-color: var(–ink-mute);
+font-size: 13px;
+color: var(–ink-soft);
 cursor: pointer;
 transition: all .2s;
-border-radius: 1px;
+border-radius: 7px;
+font-weight: 500;
 }
 .seg-btn.on {
-background: var(–ink);
-color: var(–paper);
+background: #FFFFFF;
+color: var(–ink);
+box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 1px rgba(0,0,0,.04);
 }
 
 .pt {
@@ -209,12 +210,12 @@ justify-content: center;
 padding: 20px;
 }
 .modal-box {
-background: #FFFFFF;
+background: var(–paper);
 width: 100%;
 max-width: 420px;
 border-radius: 18px;
-padding: 24px;
-box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4), 0 12px 30px rgba(0, 0, 0, 0.2);
+padding: 0;
+box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35), 0 12px 30px rgba(0, 0, 0, 0.18);
 transform: translateY(20px) scale(.96);
 opacity: 0;
 transition: transform .4s cubic-bezier(.22,1,.36,1), opacity .3s;
@@ -223,6 +224,50 @@ overflow-y: auto;
 position: relative;
 z-index: 1;
 }
+.modal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 16px 20px;
+border-bottom: 1px solid var(–rule);
+background: var(–paper);
+position: sticky;
+top: 0;
+z-index: 2;
+}
+.modal-body {
+padding: 24px 20px 28px;
+}
+.modal-btn-text {
+font-size: 14px;
+letter-spacing: 0.02em;
+padding: 6px 4px;
+background: none;
+border: none;
+cursor: pointer;
+font-family: var(–sys);
+}
+.field {
+background: #FFFFFF;
+border: 1px solid var(–rule);
+border-radius: 12px;
+padding: 12px 14px;
+transition: border-color .2s, box-shadow .2s;
+}
+.field:focus-within {
+border-color: var(–accent);
+box-shadow: 0 0 0 3px rgba(193, 95, 60, 0.1);
+}
+.field-input {
+background: transparent;
+border: none;
+outline: none;
+width: 100%;
+font-family: var(–sys);
+color: var(–ink);
+padding: 0;
+}
+.field-input::placeholder { color: var(–ink-faint); }
 .modal-box.open {
 transform: translateY(0) scale(1);
 opacity: 1;
@@ -281,10 +326,11 @@ transform: translateX(-50%) translateY(0);
 }
 
 .cdlg {
-background: #FFFFFF;
+background: var(–paper);
 border-radius: 16px;
 width: 320px;
-box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4), 0 12px 30px rgba(0, 0, 0, 0.2);
+box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35), 0 12px 30px rgba(0, 0, 0, 0.18);
+overflow: hidden;
 }
 
 .hcard {
@@ -562,47 +608,51 @@ to   { opacity: 1; transform: translateY(0); }
 
 <div id="modal" class="modal-bg hidden" onclick="bgClick(event)">
     <div class="modal-box" id="mbox">
-        <div class="flex justify-between items-center mb-7">
-            <button onclick="closeModal()" class="text-[12px] zh" style="color:var(--ink-mute); letter-spacing:.06em">取消</button>
-            <h3 class="serif text-[16px] zh font-medium" id="m-title">新增紀錄</h3>
-            <button onclick="submitModal()" class="text-[12px] zh font-medium" style="color:var(--accent); letter-spacing:.06em" id="m-ok">確認</button>
+        <div class="modal-header">
+            <button onclick="closeModal()" class="modal-btn-text" style="color:var(--ink-soft)">取消</button>
+            <h3 class="text-[16px] font-semibold" id="m-title">新增紀錄</h3>
+            <button onclick="submitModal()" class="modal-btn-text font-semibold" style="color:var(--accent)" id="m-ok">確認</button>
         </div>
-        <div class="seg mb-7">
-            <div class="seg-btn on zh" id="seg-s" onclick="setType('single')">單筆</div>
-            <div class="seg-btn zh" id="seg-i" onclick="setType('installment')">分期</div>
-        </div>
-        <input type="hidden" id="m-cat"><input type="hidden" id="m-id"><input type="hidden" id="m-type" value="single">
-        <div class="space-y-5">
-            <div>
-                <label class="field-label zh block mb-1.5">項目</label>
-                <input type="text" id="m-name" placeholder="如：房租、水電費" class="ink-input serif text-[18px]">
+        <div class="modal-body">
+            <div class="seg mb-6">
+                <div class="seg-btn on" id="seg-s" onclick="setType('single')">單筆</div>
+                <div class="seg-btn" id="seg-i" onclick="setType('installment')">分期</div>
             </div>
-            <div>
-                <label class="field-label zh block mb-1.5">金額</label>
-                <div class="flex items-baseline gap-2">
-                    <span class="serif text-[18px]" style="color:var(--ink-mute)">$</span>
-                    <input type="number" id="m-amt" placeholder="0" class="ink-input serif text-[24px] font-normal tnum">
-                </div>
-            </div>
-            <div id="inst-fields" class="hidden space-y-4 pt-2">
-                <div class="grid grid-cols-2 gap-5">
-                    <div>
-                        <label class="field-label zh block mb-1.5">總期數</label>
-                        <div class="flex items-baseline gap-2">
-                            <input type="number" id="m-periods" placeholder="12" class="ink-input serif text-[20px] tnum text-center">
-                            <span class="text-[12px] zh" style="color:var(--ink-mute)">期</span>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="field-label zh block mb-1.5">本月第幾期</label>
-                        <div class="flex items-baseline gap-2">
-                            <input type="number" id="m-cur" value="1" class="ink-input serif text-[20px] tnum text-center" style="color:var(--accent)">
-                            <span class="text-[12px] zh" style="color:var(--ink-mute)">期</span>
-                        </div>
+            <input type="hidden" id="m-cat"><input type="hidden" id="m-id"><input type="hidden" id="m-type" value="single">
+            <div class="space-y-3.5">
+                <div>
+                    <label class="field-label block mb-1.5">項目</label>
+                    <div class="field">
+                        <input type="text" id="m-name" placeholder="如：房租、水電費" class="field-input text-[16px]">
                     </div>
                 </div>
-                <div class="text-[11px] zh leading-relaxed pt-1" style="color:var(--ink-mute); border-left:1px solid var(--rule); padding-left:12px" id="inst-info">
-                    請填入期數與第幾期
+                <div>
+                    <label class="field-label block mb-1.5">金額</label>
+                    <div class="field flex items-baseline gap-1.5">
+                        <span class="text-[18px]" style="color:var(--ink-mute)">$</span>
+                        <input type="number" id="m-amt" placeholder="0" class="field-input text-[20px] font-medium tnum">
+                    </div>
+                </div>
+                <div id="inst-fields" class="hidden space-y-3.5 pt-1">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="field-label block mb-1.5">總期數</label>
+                            <div class="field flex items-baseline gap-1.5">
+                                <input type="number" id="m-periods" placeholder="12" class="field-input text-[18px] tnum text-center">
+                                <span class="text-[12px]" style="color:var(--ink-mute)">期</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label block mb-1.5">本月第幾期</label>
+                            <div class="field flex items-baseline gap-1.5">
+                                <input type="number" id="m-cur" value="1" class="field-input text-[18px] tnum text-center" style="color:var(--accent)">
+                                <span class="text-[12px]" style="color:var(--ink-mute)">期</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[12px] leading-relaxed px-3 py-2.5 rounded-lg" style="color:var(--ink-soft); background:var(--accent-bg); border-left:2px solid var(--accent)" id="inst-info">
+                        請填入期數與第幾期
+                    </div>
                 </div>
             </div>
         </div>
