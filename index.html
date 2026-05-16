@@ -4,180 +4,227 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Budget-Planner</title>
+<title>Budget Planner</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
-    --bg: #F5F1EB;
-    --paper: #FAF7F2;
-    --ink: #1F1E1D;
-    --ink-soft: #45413C;
-    --ink-mute: #8A857C;
+    /* Warm cream palette inspired by reference */
+    --bg: #FAF5EB;
+    --bg-soft: #F5EFE2;
+    --paper: #FFFFFF;
+    --ink: #2A2520;
+    --ink-soft: #5C544A;
+    --ink-mute: #9A9186;
     --ink-faint: #C9C2B6;
-    --rule: #E5DFD3;
-    --rule-soft: #EEE9DD;
-    --accent: #C15F3C;
-    --accent-soft: #E8C7B5;
-    --accent-bg: #F0E1D5;
-    --good: #6B7F4F;
-    --good-bg: #E8E9D9;
-    --warn: #B8512F;
-    --sys: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'PingFang TC', 'Helvetica Neue', system-ui, sans-serif;
-}
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sys);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh;
-}
-.serif {
-    font-family: var(--sys);
-    letter-spacing: -0.015em;
-}
-.serif-display {
-    font-family: var(--sys);
-    letter-spacing: -0.03em;
-    font-weight: 600;
-}
-.zh { font-family: var(--sys); }
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-input[type=number] { -moz-appearance: textfield; }
+    --rule: #EEE7D8;
+    --rule-soft: #F5EFE2;
 
-.paper {
+```
+/* Category colors from reference */
+--c-save: #E5B53D;       /* 儲蓄 - 金黃 */
+--c-save-bg: #FBF1D4;
+--c-save-soft: #F5DC95;
+
+--c-live: #D9603F;       /* 生活 - 橘紅 */
+--c-live-bg: #FBE2D6;
+--c-live-soft: #F0AE93;
+
+--c-ins: #9DA45E;        /* 保險 - 橄欖綠 */
+--c-ins-bg: #ECEDD3;
+--c-ins-soft: #BFC68C;
+
+--c-free: #B8B0A0;       /* 可用 - 灰 */
+--c-free-bg: #EDE8DC;
+--c-free-soft: #D5CFC0;
+
+--warn: #C4513A;
+
+--sys: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'PingFang TC', 'Helvetica Neue', system-ui, sans-serif;
+
+--shadow-card: 0 1px 2px rgba(60, 48, 30, 0.04), 0 4px 16px rgba(60, 48, 30, 0.05);
+--shadow-card-hover: 0 2px 4px rgba(60, 48, 30, 0.06), 0 8px 24px rgba(60, 48, 30, 0.08);
+```
+
+}
+
+- { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+  background: var(–bg);
+  color: var(–ink);
+  font-family: var(–sys);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  }
+  .zh { font-family: var(–sys); }
+  .tnum { font-variant-numeric: tabular-nums; }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+
+/* Card */
+.card {
 background: var(–paper);
-border: 1px solid var(–rule);
-border-radius: 4px;
+border-radius: 22px;
+box-shadow: var(–shadow-card);
+transition: box-shadow .25s;
 }
-.rule { border-color: var(–rule); }
-.ink-input {
-background: transparent;
-border: none;
-border-bottom: 1px solid var(–rule);
-outline: none;
-padding: 10px 0;
-font-family: var(–sys);
-transition: border-color .25s;
-width: 100%;
+.card-soft {
+background: var(–bg-soft);
+border-radius: 22px;
 }
-.ink-input:focus { border-bottom-color: var(–accent); }
+
+/* Category dot */
+.dot {
+width: 8px; height: 8px;
+border-radius: 50%;
+display: inline-block;
+flex-shrink: 0;
+}
+
+/* Category icon (circle bg + icon inside) */
+.cat-icon {
+width: 48px; height: 48px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+}
+
+/* Field label */
 .field-label {
-font-size: 10px;
-letter-spacing: 0.18em;
-text-transform: uppercase;
+font-size: 11px;
+letter-spacing: 0.06em;
 color: var(–ink-mute);
 font-weight: 500;
 }
-.btn-ghost {
+
+/* Inputs */
+.amt-input {
+background: var(–bg-soft);
+border: 1.5px solid transparent;
+border-radius: 14px;
+padding: 14px 18px;
+font-family: var(–sys);
+font-size: 18px;
+color: var(–ink);
+outline: none;
+width: 100%;
+transition: all .2s;
+font-variant-numeric: tabular-nums;
+}
+.amt-input:focus {
+background: var(–paper);
+border-color: var(–c-save);
+box-shadow: 0 0 0 4px rgba(229, 181, 61, 0.12);
+}
+.amt-input::placeholder { color: var(–ink-faint); }
+
+/* Salary big input */
+.salary-input {
 background: transparent;
-border: 1px solid var(–rule);
-color: var(–ink-soft);
-padding: 8px 14px;
-border-radius: 2px;
-font-size: 12px;
-letter-spacing: 0.04em;
-transition: all .2s;
-cursor: pointer;
+border: none;
+outline: none;
+font-family: var(–sys);
+font-size: 38px;
+font-weight: 600;
+color: var(–ink);
+width: 100%;
+padding: 4px 0;
+font-variant-numeric: tabular-nums;
+letter-spacing: -0.02em;
 }
-.btn-ghost:hover { border-color: var(–ink-soft); color: var(–ink); }
-.btn-accent {
-background: var(–ink);
-color: var(–paper);
-border: 1px solid var(–ink);
-padding: 8px 16px;
-border-radius: 2px;
-font-size: 12px;
-letter-spacing: 0.06em;
-cursor: pointer;
+.salary-input::placeholder { color: var(–ink-faint); font-weight: 400; }
+
+.savings-input {
+background: var(–bg-soft);
+border: 1.5px solid transparent;
+border-radius: 12px;
+padding: 10px 14px;
+font-size: 17px;
+font-weight: 600;
+color: var(–ink);
+outline: none;
+width: 140px;
+text-align: right;
 transition: all .2s;
+font-variant-numeric: tabular-nums;
 }
-.btn-accent:hover { background: var(–accent); border-color: var(–accent); }
+.savings-input:focus {
+background: var(–paper);
+border-color: var(–c-save);
+box-shadow: 0 0 0 4px rgba(229, 181, 61, 0.12);
+}
+
+/* Buttons */
 .add-btn {
-width: 28px; height: 28px;
-border: 1px solid var(–rule);
+width: 34px; height: 34px;
 border-radius: 50%;
 display: flex; align-items: center; justify-content: center;
+background: var(–bg-soft);
 color: var(–ink-soft);
-font-size: 18px; line-height: 0;
-font-family: var(–sys);
-font-weight: 300;
-transition: all .2s;
+border: none;
 cursor: pointer;
-background: transparent;
+transition: all .2s;
+flex-shrink: 0;
 }
-.add-btn:hover { border-color: var(–accent); color: var(–accent); }
+.add-btn:hover {
+background: var(–c-live);
+color: white;
+transform: scale(1.05);
+}
+.add-btn svg { width: 16px; height: 16px; stroke-width: 2.2; }
+
 .icon-btn {
-width: 26px; height: 26px;
+width: 28px; height: 28px;
 display: inline-flex; align-items: center; justify-content: center;
 color: var(–ink-mute);
-transition: color .2s;
+transition: all .2s;
 background: none; border: none; cursor: pointer;
 border-radius: 50%;
 }
-.icon-btn:hover { color: var(–ink); }
-.icon-btn.danger:hover { color: var(–warn); }
+.icon-btn:hover { color: var(–ink); background: var(–bg-soft); }
+.icon-btn.danger:hover { color: var(–warn); background: rgba(196, 81, 58, 0.08); }
 
-.divider-thin { border-bottom: 1px solid var(–rule-soft); }
-.divider-thick { border-bottom: 1px solid var(–rule); }
-
-.seg {
-display: flex;
-background: rgba(31, 30, 29, 0.06);
-border-radius: 10px;
-padding: 3px;
-}
-.seg-btn {
-flex: 1;
-text-align: center;
-padding: 8px 0;
-font-size: 13px;
+.nav-btn {
+width: 34px; height: 34px;
+display: flex; align-items: center; justify-content: center;
 color: var(–ink-soft);
+background: var(–paper);
+border: none;
+border-radius: 50%;
 cursor: pointer;
 transition: all .2s;
-border-radius: 7px;
-font-weight: 500;
+box-shadow: var(–shadow-card);
 }
-.seg-btn.on {
-background: #FFFFFF;
-color: var(–ink);
-box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 1px rgba(0,0,0,.04);
-}
+.nav-btn:hover { color: var(–ink); transform: scale(1.05); }
 
+/* Progress bar */
 .pt {
-height: 1px;
-background: var(–rule);
+height: 4px;
+background: var(–bg-soft);
+border-radius: 4px;
+overflow: hidden;
 position: relative;
-overflow: visible;
 }
 .pf {
-height: 1px;
+height: 100%;
+border-radius: 4px;
 transition: width .8s cubic-bezier(.22,1,.36,1);
-position: relative;
-}
-.pf::after {
-content: ‘’;
-position: absolute;
-right: -3px; top: -2px;
-width: 5px; height: 5px;
-background: currentColor;
-border-radius: 50%;
 }
 
+/* Tag */
 .tag {
 display: inline-flex;
 align-items: center;
-padding: 2px 9px;
-border-radius: 2px;
+padding: 3px 10px;
+border-radius: 999px;
 font-size: 10px;
-letter-spacing: 0.1em;
-text-transform: uppercase;
-font-weight: 500;
+letter-spacing: 0.04em;
+font-weight: 600;
 }
 
+/* Bottom nav */
 .nav-tab {
 flex: 1;
 display: flex;
@@ -189,41 +236,67 @@ cursor: pointer;
 transition: color .2s;
 color: var(–ink-mute);
 position: relative;
+background: none;
+border: none;
 }
-.nav-tab.active { color: var(–ink); }
+.nav-tab.active { color: var(–c-live); }
 .nav-tab.active::before {
 content: ‘’;
 position: absolute;
 top: 0; left: 50%;
 transform: translateX(-50%);
-width: 20px; height: 1px;
-background: var(–accent);
+width: 24px; height: 2px;
+background: var(–c-live);
+border-radius: 2px;
 }
 
+/* Segmented control */
+.seg {
+display: flex;
+background: var(–bg-soft);
+border-radius: 12px;
+padding: 4px;
+}
+.seg-btn {
+flex: 1;
+text-align: center;
+padding: 9px 0;
+font-size: 13px;
+color: var(–ink-soft);
+cursor: pointer;
+transition: all .2s;
+border-radius: 9px;
+font-weight: 500;
+}
+.seg-btn.on {
+background: var(–paper);
+color: var(–ink);
+box-shadow: 0 1px 3px rgba(0,0,0,.06);
+font-weight: 600;
+}
+
+/* Modal */
 .modal-bg {
 position: fixed; inset: 0;
-background-color: rgba(31, 30, 29, 0.72);
+background-color: rgba(42, 37, 32, 0.5);
+backdrop-filter: blur(8px);
 z-index: 50;
 display: flex;
 align-items: center;
 justify-content: center;
 padding: 20px;
-isolation: isolate;
 }
 .modal-box {
-background: #F5F1EB;
+background: var(–paper);
 width: 100%;
 max-width: 420px;
-border-radius: 18px;
-padding: 0;
-box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4), 0 12px 30px rgba(0, 0, 0, 0.2);
+border-radius: 24px;
+box-shadow: 0 30px 80px rgba(0,0,0,.25);
 transform: translateY(20px) scale(.96);
 opacity: 0;
-transition: transform .4s cubic-bezier(.22,1,.36,1), opacity .3s;
+transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .25s;
 max-height: calc(100vh - 40px);
 overflow-y: auto;
-position: relative;
-z-index: 1;
 }
 .modal-box.open {
 transform: translateY(0) scale(1);
@@ -233,21 +306,17 @@ opacity: 1;
 display: flex;
 justify-content: space-between;
 align-items: center;
-padding: 16px 20px;
+padding: 18px 22px;
 border-bottom: 1px solid var(–rule);
-background: #F5F1EB;
 position: sticky;
 top: 0;
+background: var(–paper);
 z-index: 2;
-border-radius: 18px 18px 0 0;
+border-radius: 24px 24px 0 0;
 }
-.modal-body {
-padding: 20px 20px 28px;
-background: #F5F1EB;
-}
+.modal-body { padding: 22px; }
 .modal-btn-text {
 font-size: 14px;
-letter-spacing: 0.02em;
 padding: 6px 4px;
 background: none;
 border: none;
@@ -255,15 +324,16 @@ cursor: pointer;
 font-family: var(–sys);
 }
 .field {
-background: #FFFFFF;
-border: 1px solid var(–rule);
-border-radius: 12px;
-padding: 12px 14px;
-transition: border-color .2s, box-shadow .2s;
+background: var(–bg-soft);
+border: 1.5px solid transparent;
+border-radius: 14px;
+padding: 12px 16px;
+transition: all .2s;
 }
 .field:focus-within {
-border-color: var(–accent);
-box-shadow: 0 0 0 3px rgba(193, 95, 60, 0.12);
+background: var(–paper);
+border-color: var(–c-live);
+box-shadow: 0 0 0 4px rgba(217, 96, 63, 0.1);
 }
 .field-input {
 background: transparent;
@@ -275,11 +345,8 @@ color: var(–ink);
 padding: 0;
 }
 .field-input::placeholder { color: var(–ink-faint); }
-.modal-box.open {
-transform: translateY(0) scale(1);
-opacity: 1;
-}
 
+/* Auth */
 #auth {
 position: fixed; inset: 0;
 z-index: 100;
@@ -294,17 +361,60 @@ align-items: center;
 gap: 12px;
 background: var(–ink);
 color: var(–paper);
-border-radius: 2px;
-padding: 14px 24px;
+border-radius: 999px;
+padding: 14px 26px;
 font-size: 14px;
-letter-spacing: 0.04em;
 cursor: pointer;
 border: none;
 transition: all .2s;
+box-shadow: 0 4px 16px rgba(42, 37, 32, 0.15);
 }
-.gbtn:hover { background: var(–accent); }
+.gbtn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(42, 37, 32, 0.2); }
 
-.ring-wrap { position: relative; width: 132px; height: 132px; flex-shrink: 0; }
+/* Toast */
+.toast {
+position: fixed;
+top: 80px; left: 50%;
+transform: translateX(-50%) translateY(-12px);
+background: var(–ink);
+color: var(–paper);
+padding: 11px 22px;
+border-radius: 999px;
+font-size: 13px;
+z-index: 200;
+opacity: 0;
+transition: all .35s cubic-bezier(.22,1,.36,1);
+pointer-events: none;
+box-shadow: 0 8px 24px rgba(0,0,0,.2);
+}
+.toast.on {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
+
+/* Confirm dialog */
+.cdlg {
+background: var(–paper);
+border-radius: 20px;
+width: 320px;
+box-shadow: 0 30px 80px rgba(0,0,0,.25);
+overflow: hidden;
+}
+
+/* History card */
+.hcard {
+background: var(–paper);
+border-radius: 18px;
+padding: 16px 18px;
+box-shadow: var(–shadow-card);
+}
+
+/* Hover row */
+.hover-row { transition: background-color .15s; border-radius: 12px; }
+.hover-row:hover { background-color: var(–bg-soft); }
+
+/* Ring */
+.ring-wrap { position: relative; width: 124px; height: 124px; flex-shrink: 0; }
 .ring-center {
 position: absolute; inset: 0;
 display: flex; flex-direction: column;
@@ -312,54 +422,9 @@ align-items: center; justify-content: center;
 text-align: center;
 }
 
-.toast {
-position: fixed;
-top: 80px; left: 50%;
-transform: translateX(-50%) translateY(-12px);
-background: var(–ink);
-color: var(–paper);
-padding: 10px 20px;
-border-radius: 2px;
-font-size: 13px;
-letter-spacing: 0.04em;
-z-index: 200;
-opacity: 0;
-transition: all .35s cubic-bezier(.22,1,.36,1);
-pointer-events: none;
-}
-.toast.on {
-opacity: 1;
-transform: translateX(-50%) translateY(0);
-}
-
-.cdlg {
-background: #F5F1EB;
-border-radius: 16px;
-width: 320px;
-box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4), 0 12px 30px rgba(0, 0, 0, 0.2);
-overflow: hidden;
-}
-
-.hcard {
-border-left: 1px solid var(–rule);
-padding-left: 16px;
-position: relative;
-}
-.hcard::before {
-content: ‘’;
-position: absolute;
-left: -3px; top: 8px;
-width: 5px; height: 5px;
-background: var(–accent);
-border-radius: 50%;
-}
-
 ::-webkit-scrollbar { width: 0; }
 
-/* tabular figures for numbers */
-.tnum { font-variant-numeric: tabular-nums; }
-
-/* subtle pull animation */
+/* Rise animation */
 @keyframes rise {
 from { opacity: 0; transform: translateY(8px); }
 to   { opacity: 1; transform: translateY(0); }
@@ -370,9 +435,28 @@ to   { opacity: 1; transform: translateY(0); }
 .rise-3 { animation-delay: .19s; }
 .rise-4 { animation-delay: .26s; }
 .rise-5 { animation-delay: .33s; }
+.rise-6 { animation-delay: .40s; }
 
-.hover-row { transition: background-color .15s; border-radius: 2px; }
-.hover-row:hover { background-color: rgba(193, 95, 60, 0.04); }
+/* Month chip */
+.month-chip {
+background: var(–bg-soft);
+border-radius: 999px;
+padding: 6px 14px;
+font-size: 13px;
+font-weight: 600;
+color: var(–ink);
+letter-spacing: 0.01em;
+}
+
+/* Daily badge */
+.daily-badge {
+background: var(–c-save-bg);
+color: #8B6914;
+padding: 4px 10px;
+border-radius: 999px;
+font-size: 11px;
+font-weight: 600;
+}
 </style>
 
 </head>
@@ -382,18 +466,20 @@ to   { opacity: 1; transform: translateY(0); }
 
 <div id="auth">
     <div class="text-center px-8 max-w-sm rise">
-        <div class="mb-12 flex justify-center">
-            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="var(--accent)" stroke-width="1.2">
-                <circle cx="22" cy="22" r="18"/>
-                <path d="M 13 22 L 22 13 L 31 22 L 22 31 Z" stroke-linejoin="round"/>
-                <circle cx="22" cy="22" r="3" fill="var(--accent)" stroke="none"/>
-            </svg>
+        <div class="mb-10 flex justify-center">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background: var(--c-save-bg)">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="var(--c-save)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 13c0-3.5-2.5-6-6-6s-6 2.5-6 6c0 1.5.5 2.8 1.4 3.8L9 19v3h3l1.5-1.5c.8.3 1.6.5 2.5.5s1.7-.2 2.5-.5L20 22h3v-3l-2.4-2.2c.9-1 1.4-2.3 1.4-3.8z"/>
+                    <circle cx="19" cy="12" r="1" fill="var(--c-save)"/>
+                    <path d="M6 14h2"/>
+                </svg>
+            </div>
         </div>
-        <div class="field-label mb-3">Six · Three · One</div>
-        <h1 class="serif-display text-[40px] mb-4 zh font-normal" style="color:var(--ink); line-height:1.15">
-            預算的<em style="color:var(--accent); font-style:italic">秩序</em>
+        <div class="field-label mb-3" style="text-transform: uppercase; letter-spacing: 0.2em">Six · Three · One</div>
+        <h1 class="text-[36px] mb-4 zh font-bold" style="color:var(--ink); line-height:1.2; letter-spacing:-0.02em">
+            預算的<span style="color:var(--c-live)">秩序</span>
         </h1>
-        <p class="zh text-[14px] mb-12 leading-relaxed" style="color:var(--ink-soft)">
+        <p class="zh text-[14px] mb-10 leading-relaxed" style="color:var(--ink-soft)">
             把每一塊收入，分給該去的地方。<br>
             生活、儲蓄、保險——各得其所。
         </p>
@@ -418,192 +504,216 @@ to   { opacity: 1; transform: translateY(0); }
 
 ```
 <!-- Topbar -->
-<div class="sticky top-0 z-30" style="background: rgba(245, 241, 235, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule);">
+<div class="sticky top-0 z-30" style="background: rgba(250, 245, 235, 0.88); backdrop-filter: blur(14px);">
     <div class="max-w-md mx-auto px-5 py-4 flex justify-between items-center">
         <div class="flex items-center gap-2.5">
-            <svg width="20" height="20" viewBox="0 0 44 44" fill="none" stroke="var(--accent)" stroke-width="1.5">
-                <circle cx="22" cy="22" r="18"/>
-                <circle cx="22" cy="22" r="3" fill="var(--accent)" stroke="none"/>
-            </svg>
-            <span class="font-semibold text-[15px] tracking-tight" style="letter-spacing:-0.02em">Budget Planner</span>
+            <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background: var(--c-live-bg)">
+                <div class="w-3 h-3 rounded-full" style="background: var(--c-live)"></div>
+            </div>
+            <span class="font-bold text-[16px] tracking-tight" style="letter-spacing:-0.02em">Budget Planner</span>
         </div>
         <div class="flex items-center gap-3">
-            <img id="avatar" src="" class="w-7 h-7 rounded-full hidden" style="border:1px solid var(--rule)"/>
-            <button id="logout-btn" class="hidden text-[11px]" style="color:var(--ink-mute); letter-spacing:.1em">登出</button>
+            <img id="avatar" src="" class="w-8 h-8 rounded-full hidden" style="border:2px solid var(--paper); box-shadow: var(--shadow-card)"/>
+            <button id="logout-btn" class="hidden text-[12px] zh px-3 py-1 rounded-full" style="background: var(--bg-soft); color:var(--ink-soft)">登出</button>
         </div>
     </div>
 </div>
 
 <!-- Main content -->
-<div class="max-w-md mx-auto px-5 pb-28 pt-6 space-y-8" id="main-page">
+<div class="max-w-md mx-auto px-5 pb-28 pt-2 space-y-5" id="main-page">
 
-    <!-- Month + Salary -->
-    <div class="rise rise-1">
-        <div class="flex justify-between items-center mb-6">
-            <button id="prev-btn" class="icon-btn" style="width:32px; height:32px">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 6l-6 6 6 6"/></svg>
-            </button>
+    <!-- Category overview strip (top 4-dot card from reference) -->
+    <div class="card px-5 py-4 rise rise-1">
+        <div class="grid grid-cols-4 gap-2">
             <div class="text-center">
-                <div class="field-label mb-1">月度規劃</div>
-                <div class="serif text-[22px] zh font-medium" id="month-label">載入中</div>
+                <div class="field-label zh mb-1.5">儲蓄</div>
+                <div class="flex items-center justify-center gap-1.5">
+                    <span class="dot" style="background: var(--c-save)"></span>
+                    <span class="font-bold text-[15px] tnum" id="cat-sav">30%</span>
+                </div>
             </div>
-            <button id="next-btn" class="icon-btn" style="width:32px; height:32px">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+            <div class="text-center">
+                <div class="field-label zh mb-1.5">生活</div>
+                <div class="flex items-center justify-center gap-1.5">
+                    <span class="dot" style="background: var(--c-live)"></span>
+                    <span class="font-bold text-[15px] tnum" id="cat-liv">0%</span>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="field-label zh mb-1.5">保險</div>
+                <div class="flex items-center justify-center gap-1.5">
+                    <span class="dot" style="background: var(--c-ins)"></span>
+                    <span class="font-bold text-[15px] tnum" id="cat-ins">10%</span>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="field-label zh mb-1.5">可用</div>
+                <div class="flex items-center justify-center gap-1.5">
+                    <span class="dot" style="background: var(--c-free)"></span>
+                    <span class="font-bold text-[15px] tnum" id="cat-free">60%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Month + Salary card -->
+    <div class="card px-5 py-5 rise rise-2">
+        <div class="flex justify-between items-center mb-4">
+            <button id="prev-btn" class="nav-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+            </button>
+            <div class="month-chip zh" id="month-label">載入中</div>
+            <button id="next-btn" class="nav-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
             </button>
         </div>
         <div>
-            <div class="field-label mb-2 zh">本月收入</div>
-            <div class="relative flex items-baseline gap-2">
-                <span class="serif text-[28px] font-normal" style="color:var(--ink-mute)">$</span>
-                <input type="number" id="salary" placeholder="0" class="ink-input serif text-[36px] font-normal tnum">
+            <div class="field-label mb-1.5 zh">本月收入</div>
+            <div class="flex items-baseline gap-2">
+                <span class="text-[30px] font-semibold" style="color:var(--ink-mute)">$</span>
+                <input type="number" id="salary" placeholder="0" class="salary-input">
             </div>
         </div>
     </div>
 
-    <!-- Overview -->
-    <div class="rise rise-2">
-        <div class="flex items-center gap-5 mb-7">
+    <!-- Donut overview -->
+    <div class="card px-5 py-5 rise rise-3">
+        <div class="flex items-center gap-5">
             <div class="ring-wrap">
-                <canvas id="donut" width="132" height="132"></canvas>
+                <canvas id="donut" width="124" height="124"></canvas>
                 <div class="ring-center">
-                    <div class="field-label">已使用</div>
-                    <div class="serif text-[26px] font-normal tnum mt-0.5" id="used-pct">0<span class="text-[16px]" style="color:var(--ink-mute)">%</span></div>
+                    <div class="field-label zh">已使用</div>
+                    <div class="text-[24px] font-bold tnum mt-0.5" id="used-pct">0<span class="text-[15px]" style="color:var(--ink-mute)">%</span></div>
                 </div>
             </div>
             <div class="flex-1 min-w-0">
-                <div class="field-label mb-1.5 zh">可自由支配</div>
-                <div class="serif text-[34px] font-normal tnum tracking-tight leading-none" id="remain-val">$0</div>
-                <div class="mt-4 pt-3 divider-thin">
-                    <div class="flex justify-between items-baseline">
-                        <span class="zh text-[12px]" style="color:var(--ink-mute)">每日建議</span>
-                        <span class="serif text-[16px] tnum" id="daily-val" style="color:var(--accent)">$0</span>
-                    </div>
+                <div class="field-label mb-1 zh">可自由支配</div>
+                <div class="text-[28px] font-bold tnum leading-none mb-3" id="remain-val" style="letter-spacing:-0.02em">$0</div>
+                <div class="flex items-center justify-between pt-3" style="border-top:1px solid var(--rule)">
+                    <span class="zh text-[12px]" style="color:var(--ink-mute)">每日建議</span>
+                    <span class="daily-badge tnum" id="daily-val">$0</span>
                 </div>
-            </div>
-        </div>
-
-        <!-- Allocation breakdown -->
-        <div class="space-y-3">
-            <div class="flex items-center justify-between text-[13px]">
-                <div class="flex items-center gap-3">
-                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--accent)"></div>
-                    <span class="zh" style="color:var(--ink-soft)">儲蓄</span>
-                    <span class="field-label tnum" id="sav-pct">30%</span>
-                </div>
-                <span class="serif tnum" id="sav-amt">$0</span>
-            </div>
-            <div class="flex items-center justify-between text-[13px]">
-                <div class="flex items-center gap-3">
-                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--ink-soft)"></div>
-                    <span class="zh" style="color:var(--ink-soft)">生活</span>
-                    <span class="field-label tnum" id="liv-pct">0%</span>
-                </div>
-                <span class="serif tnum" id="liv-amt">$0</span>
-            </div>
-            <div class="flex items-center justify-between text-[13px]">
-                <div class="flex items-center gap-3">
-                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--good)"></div>
-                    <span class="zh" style="color:var(--ink-soft)">保險</span>
-                    <span class="field-label tnum" id="ins-pct">0%</span>
-                </div>
-                <span class="serif tnum" id="ins-amt">$0</span>
             </div>
         </div>
     </div>
 
-    <!-- Savings -->
-    <div class="rise rise-3 pt-6 divider-thick">
-        <div class="flex justify-between items-start mb-4">
-            <div>
-                <div class="field-label mb-1 zh">儲蓄</div>
-                <div class="serif text-[18px] zh font-medium">每月留下的</div>
+    <!-- 儲蓄計畫 (Savings) - Piggy card -->
+    <div class="card px-5 py-4 rise rise-4">
+        <div class="flex items-center gap-4">
+            <div class="cat-icon" style="background: var(--c-save-bg)">
+                <!-- Piggy bank -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--c-save)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 11c0-3.3-3.1-6-7-6s-7 2.7-7 6c0 1.5.6 2.8 1.6 3.9L5 17h2.5l1-1c.8.3 1.6.5 2.5.5s1.7-.2 2.5-.5l1 1H17l-1.6-2.1c1-1.1 1.6-2.4 1.6-3.9z" transform="translate(-1 0)"/>
+                    <circle cx="14" cy="10" r="0.8" fill="var(--c-save)"/>
+                    <path d="M3 11h2M9 6V4"/>
+                </svg>
             </div>
-            <div class="text-right">
-                <span class="serif text-[14px]" style="color:var(--ink-mute)">$</span>
-                <input type="number" id="savings" class="bg-transparent serif text-[22px] font-normal tnum text-right outline-none w-28" value="0" style="border-bottom:1px solid var(--rule); padding-bottom:2px">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2 mb-0.5">
+                    <span class="font-bold text-[16px] zh">儲蓄計畫</span>
+                    <span class="text-[11px] zh" style="color:var(--ink-mute)" id="sav-lbl">預設 30%</span>
+                </div>
+                <button id="reset-sav-btn" class="hidden text-[11px] zh font-semibold" style="color:var(--c-live)" onclick="resetSavings()">
+                    ← 重置為 30%
+                </button>
+            </div>
+            <div class="relative">
+                <input type="number" id="savings" class="savings-input" value="0" placeholder="$">
             </div>
         </div>
-        <div class="flex justify-between items-center">
-            <span class="text-[11px] zh" style="color:var(--ink-mute)" id="sav-lbl">預設 30%</span>
-            <button id="reset-sav-btn" class="hidden text-[11px] zh" style="color:var(--accent); letter-spacing:.05em" onclick="resetSavings()">
-                ← 重置為 30%
+    </div>
+
+    <!-- 生活支出 (Living) -->
+    <div class="card px-5 py-5 rise rise-5">
+        <div class="flex items-start gap-4 mb-4">
+            <div class="cat-icon" style="background: var(--c-live-bg)">
+                <!-- Card icon -->
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--c-live)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="6" width="18" height="13" rx="2.5"/>
+                    <path d="M3 11h18"/>
+                    <path d="M7 15h3"/>
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2 mb-0.5 flex-wrap">
+                    <span class="font-bold text-[16px] zh">生活支出</span>
+                    <span class="text-[11px] zh" style="color:var(--ink-mute)">內含於 60%</span>
+                </div>
+                <div class="text-[11px] zh" style="color:var(--ink-mute)" id="liv-budget-lbl">預算總額度: $0</div>
+            </div>
+            <button class="add-btn" onclick="openModal('living')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
             </button>
         </div>
+        <div class="flex justify-between items-baseline mb-2 text-[12px]">
+            <span class="zh" style="color:var(--ink-soft)">已支出: <span class="font-bold tnum" id="liv-spent" style="color:var(--ink)">$0</span></span>
+            <span class="zh tnum font-bold" id="liv-remain-lbl" style="color:var(--c-live)">剩餘預算: $0</span>
+        </div>
+        <div class="pt mb-4">
+            <div id="liv-bar" class="pf" style="width:0%; background:var(--c-live)"></div>
+        </div>
+        <div id="liv-list" class="space-y-1"></div>
     </div>
 
-    <!-- Living -->
-    <div class="rise rise-4 pt-6 divider-thick">
-        <div class="flex justify-between items-start mb-5">
-            <div>
-                <div class="field-label mb-1 zh">生活</div>
-                <div class="serif text-[18px] zh font-medium">日常支出</div>
-                <div class="text-[11px] zh mt-1" style="color:var(--ink-mute)" id="liv-budget-lbl">預算 $0</div>
+    <!-- 保險支出 (Insurance) -->
+    <div class="card px-5 py-5 rise rise-6">
+        <div class="flex items-start gap-4 mb-4">
+            <div class="cat-icon" style="background: var(--c-ins-bg)">
+                <!-- Shield icon -->
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--c-ins)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/>
+                </svg>
             </div>
-            <button class="add-btn" onclick="openModal('living')">+</button>
-        </div>
-        <div class="flex justify-between items-baseline mb-2">
-            <span class="text-[12px] zh" style="color:var(--ink-mute)">
-                已支出 <span class="serif tnum" id="liv-spent" style="color:var(--ink)">$0</span>
-            </span>
-            <span class="text-[12px] zh tnum" id="liv-remain-lbl" style="color:var(--ink-soft)">剩餘 $0</span>
-        </div>
-        <div class="pt mb-5">
-            <div id="liv-bar" class="pf" style="width:0%; color:var(--ink-soft); background:var(--ink-soft)"></div>
-        </div>
-        <div id="liv-list" class="space-y-0"></div>
-    </div>
-
-    <!-- Insurance -->
-    <div class="rise rise-5 pt-6 divider-thick">
-        <div class="flex justify-between items-start mb-5">
-            <div>
-                <div class="field-label mb-1 zh">保險</div>
-                <div class="serif text-[18px] zh font-medium">保障規劃</div>
-                <div class="text-[11px] zh mt-1" style="color:var(--ink-mute)" id="ins-budget-lbl">預算 $0</div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2 mb-0.5 flex-wrap">
+                    <span class="font-bold text-[16px] zh">保險支出</span>
+                    <span class="text-[11px] zh" style="color:var(--ink-mute)">10%</span>
+                </div>
+                <div class="text-[11px] zh" style="color:var(--ink-mute)" id="ins-budget-lbl">預算總額度: $0</div>
             </div>
-            <button class="add-btn" onclick="openModal('insurance')">+</button>
+            <button class="add-btn" onclick="openModal('insurance')" style="background: var(--c-ins-bg)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--c-ins)" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
         </div>
-        <div class="flex justify-between items-baseline mb-2">
-            <span class="text-[12px] zh" style="color:var(--ink-mute)">
-                已支出 <span class="serif tnum" id="ins-spent" style="color:var(--ink)">$0</span>
-            </span>
-            <span class="text-[12px] zh tnum" id="ins-remain-lbl" style="color:var(--good)">剩餘 $0</span>
+        <div class="flex justify-between items-baseline mb-2 text-[12px]">
+            <span class="zh" style="color:var(--ink-soft)">已支出: <span class="font-bold tnum" id="ins-spent" style="color:var(--ink)">$0</span></span>
+            <span class="zh tnum font-bold" id="ins-remain-lbl" style="color:var(--c-ins)">剩餘預算: $0</span>
         </div>
-        <div class="pt mb-5">
-            <div id="ins-bar" class="pf" style="width:0%; color:var(--good); background:var(--good)"></div>
+        <div class="pt mb-4">
+            <div id="ins-bar" class="pf" style="width:0%; background:var(--c-ins)"></div>
         </div>
-        <div id="ins-list" class="space-y-0"></div>
+        <div id="ins-list" class="space-y-1"></div>
     </div>
 </div>
 
 <!-- History page -->
-<div id="hist-page" class="hidden fixed z-20 overflow-y-auto pb-28 pt-6" style="top:57px; inset:0; background:var(--bg)">
-    <div class="max-w-md mx-auto px-5 space-y-8">
-        <div>
-            <div class="field-label mb-2 zh">回顧</div>
-            <h2 class="serif-display text-[32px] zh font-normal">歷史總覽</h2>
+<div id="hist-page" class="hidden fixed z-20 overflow-y-auto pb-28 pt-4" style="top:64px; inset:0; background:var(--bg)">
+    <div class="max-w-md mx-auto px-5 space-y-5">
+        <div class="px-1">
+            <div class="field-label mb-1 zh">回顧</div>
+            <h2 class="text-[28px] zh font-bold" style="letter-spacing:-0.02em">歷史總覽</h2>
         </div>
-        <div class="pt-2">
-            <div class="field-label mb-4 zh">近六個月趨勢</div>
+        <div class="card px-5 py-5">
+            <div class="field-label mb-3 zh">近六個月趨勢</div>
             <canvas id="trend" height="180"></canvas>
         </div>
-        <div class="pt-6 divider-thick">
-            <div class="field-label mb-5 zh">各月明細</div>
-            <div id="hist-list" class="space-y-6"></div>
+        <div>
+            <div class="field-label mb-3 zh px-1">各月明細</div>
+            <div id="hist-list" class="space-y-3"></div>
         </div>
     </div>
 </div>
 
 <!-- Bottom nav -->
-<div class="fixed bottom-0 inset-x-0 z-30" style="background: rgba(245, 241, 235, 0.92); backdrop-filter: blur(12px); border-top: 1px solid var(--rule);">
+<div class="fixed bottom-0 inset-x-0 z-30" style="background: rgba(250, 245, 235, 0.92); backdrop-filter: blur(14px); border-top: 1px solid var(--rule);">
     <div class="max-w-md mx-auto flex">
         <button class="nav-tab active" data-p="main" onclick="goPage('main')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>
-            <span class="text-[10px] zh" style="letter-spacing:.1em">本月</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>
+            <span class="text-[10px] zh font-semibold" style="letter-spacing:.05em">本月</span>
         </button>
         <button class="nav-tab" data-p="hist" onclick="goPage('hist')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-            <span class="text-[10px] zh" style="letter-spacing:.1em">歷史</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <span class="text-[10px] zh font-semibold" style="letter-spacing:.05em">歷史</span>
         </button>
     </div>
 </div>
@@ -617,47 +727,47 @@ to   { opacity: 1; transform: translateY(0); }
     <div class="modal-box" id="mbox">
         <div class="modal-header">
             <button onclick="closeModal()" class="modal-btn-text" style="color:var(--ink-soft)">取消</button>
-            <h3 class="text-[16px] font-semibold" id="m-title">新增紀錄</h3>
-            <button onclick="submitModal()" class="modal-btn-text font-semibold" style="color:var(--accent)" id="m-ok">確認</button>
+            <h3 class="text-[16px] font-bold zh" id="m-title">新增紀錄</h3>
+            <button onclick="submitModal()" class="modal-btn-text font-bold" style="color:var(--c-live)" id="m-ok">確認</button>
         </div>
         <div class="modal-body">
             <div class="seg mb-6">
-                <div class="seg-btn on" id="seg-s" onclick="setType('single')">單筆</div>
-                <div class="seg-btn" id="seg-i" onclick="setType('installment')">分期</div>
+                <div class="seg-btn on zh" id="seg-s" onclick="setType('single')">單筆</div>
+                <div class="seg-btn zh" id="seg-i" onclick="setType('installment')">分期</div>
             </div>
             <input type="hidden" id="m-cat"><input type="hidden" id="m-id"><input type="hidden" id="m-type" value="single">
-            <div class="space-y-3.5">
+            <div class="space-y-4">
                 <div>
-                    <label class="field-label block mb-1.5">項目</label>
+                    <label class="field-label block mb-1.5 zh">項目</label>
                     <div class="field">
                         <input type="text" id="m-name" placeholder="如：房租、水電費" class="field-input text-[16px]">
                     </div>
                 </div>
                 <div>
-                    <label class="field-label block mb-1.5">金額</label>
+                    <label class="field-label block mb-1.5 zh">金額</label>
                     <div class="field flex items-baseline gap-1.5">
                         <span class="text-[18px]" style="color:var(--ink-mute)">$</span>
-                        <input type="number" id="m-amt" placeholder="0" class="field-input text-[20px] font-medium tnum">
+                        <input type="number" id="m-amt" placeholder="0" class="field-input text-[20px] font-semibold tnum">
                     </div>
                 </div>
-                <div id="inst-fields" class="hidden space-y-3.5 pt-1">
+                <div id="inst-fields" class="hidden space-y-4 pt-1">
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="field-label block mb-1.5">總期數</label>
+                            <label class="field-label block mb-1.5 zh">總期數</label>
                             <div class="field flex items-baseline gap-1.5">
                                 <input type="number" id="m-periods" placeholder="12" class="field-input text-[18px] tnum text-center">
-                                <span class="text-[12px]" style="color:var(--ink-mute)">期</span>
+                                <span class="text-[12px] zh" style="color:var(--ink-mute)">期</span>
                             </div>
                         </div>
                         <div>
-                            <label class="field-label block mb-1.5">本月第幾期</label>
+                            <label class="field-label block mb-1.5 zh">本月第幾期</label>
                             <div class="field flex items-baseline gap-1.5">
-                                <input type="number" id="m-cur" value="1" class="field-input text-[18px] tnum text-center" style="color:var(--accent)">
-                                <span class="text-[12px]" style="color:var(--ink-mute)">期</span>
+                                <input type="number" id="m-cur" value="1" class="field-input text-[18px] tnum text-center" style="color:var(--c-live)">
+                                <span class="text-[12px] zh" style="color:var(--ink-mute)">期</span>
                             </div>
                         </div>
                     </div>
-                    <div class="text-[12px] leading-relaxed px-3 py-2.5 rounded-lg" style="color:var(--ink-soft); background:var(--accent-bg); border-left:2px solid var(--accent)" id="inst-info">
+                    <div class="text-[12px] leading-relaxed px-3.5 py-3 rounded-xl zh" style="color:var(--ink-soft); background:var(--c-live-bg); border-left:3px solid var(--c-live)" id="inst-info">
                         請填入期數與第幾期
                     </div>
                 </div>
@@ -668,18 +778,22 @@ to   { opacity: 1; transform: translateY(0); }
 
 <!-- CONFIRM -->
 
-<div id="confirm" class="hidden fixed inset-0 z-[60] flex items-center justify-center" style="background:rgba(31,30,29,.72)">
+<div id="confirm" class="hidden fixed inset-0 z-[60] flex items-center justify-center px-5" style="background:rgba(42,37,32,.55); backdrop-filter: blur(8px);">
     <div class="cdlg">
         <div class="px-6 py-7 text-center">
-            <div class="field-label mb-3 zh" style="color:var(--warn)">刪除確認</div>
-            <h4 class="serif text-[18px] zh font-medium mb-2">確定要刪除嗎？</h4>
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center" style="background: rgba(196, 81, 58, 0.1)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 6h16M9 6V4h6v2M6 6l1 14h10l1-14"/>
+                </svg>
+            </div>
+            <h4 class="text-[17px] zh font-bold mb-2">確定要刪除嗎？</h4>
             <p class="text-[12px] zh leading-relaxed" style="color:var(--ink-mute)">
                 此動作無法復原。<br>分期項目將移除所有月份紀錄。
             </p>
         </div>
         <div class="flex" style="border-top:1px solid var(--rule)">
-            <button onclick="closeConfirm()" class="flex-1 py-3.5 text-[13px] zh" style="border-right:1px solid var(--rule); color:var(--ink-soft); letter-spacing:.06em">取消</button>
-            <button onclick="doDelete()" class="flex-1 py-3.5 text-[13px] zh font-medium" style="color:var(--warn); letter-spacing:.06em">刪除</button>
+            <button onclick="closeConfirm()" class="flex-1 py-3.5 text-[14px] zh font-semibold" style="border-right:1px solid var(--rule); color:var(--ink-soft)">取消</button>
+            <button onclick="doDelete()" class="flex-1 py-3.5 text-[14px] zh font-bold" style="color:var(--warn)">刪除</button>
         </div>
     </div>
 </div>
@@ -809,32 +923,35 @@ function render() {
     $('remain-val').style.color = livR<0 ? 'var(--warn)' : 'var(--ink)';
     $('daily-val').textContent = `$${fmt(daily)}`;
     const sP=sal>0?Math.round(sav/sal*100):30, lP=sal>0?Math.round(liv/sal*100):0, iP=sal>0?Math.round(ins/sal*100):0;
-    $('used-pct').innerHTML = `${lP+iP}<span class="text-[16px]" style="color:var(--ink-mute)">%</span>`;
-    $('sav-pct').textContent=`${sP}%`; $('sav-amt').textContent=`$${fmt(sav)}`;
-    $('liv-pct').textContent=`${lP}%`; $('liv-amt').textContent=`$${fmt(liv)}`;
-    $('ins-pct').textContent=`${iP}%`; $('ins-amt').textContent=`$${fmt(ins)}`;
-    updateDonut([sP,lP,iP,Math.max(0,100-sP-lP-iP)]);
+    const freeP = Math.max(0, 100-sP-lP-iP);
+    $('used-pct').innerHTML = `${lP+iP}<span class="text-[15px]" style="color:var(--ink-mute)">%</span>`;
 
-    $('liv-budget-lbl').textContent=`預算 $${fmt(livB)}`;
+    // top strip
+    $('cat-sav').textContent = `${sP}%`;
+    $('cat-liv').textContent = `${lP}%`;
+    $('cat-ins').textContent = `${iP}%`;
+    $('cat-free').textContent = `${freeP}%`;
+
+    updateDonut([sP, lP, iP, freeP]);
+
+    $('liv-budget-lbl').textContent=`預算總額度: $${fmt(livB)}`;
     $('liv-spent').textContent=`$${fmt(liv)}`;
     const lbP=livB>0?Math.min(Math.round(liv/livB*100),100):0;
     $('liv-bar').style.width=`${lbP}%`;
     const livOver = lbP>=100;
-    $('liv-bar').style.color = livOver ? 'var(--warn)' : 'var(--ink-soft)';
-    $('liv-bar').style.background = livOver ? 'var(--warn)' : 'var(--ink-soft)';
-    $('liv-remain-lbl').textContent=livR>=0?`剩餘 $${fmt(livR)}`:`超支 $${fmt(Math.abs(livR))}`;
-    $('liv-remain-lbl').style.color=livR<0?'var(--warn)':'var(--ink-soft)';
+    $('liv-bar').style.background = livOver ? 'var(--warn)' : 'var(--c-live)';
+    $('liv-remain-lbl').textContent=livR>=0?`剩餘預算: $${fmt(livR)}`:`超支: $${fmt(Math.abs(livR))}`;
+    $('liv-remain-lbl').style.color=livR<0?'var(--warn)':'var(--c-live)';
     renderList(list.filter(i=>i.cat==='living'), $('liv-list'), 'living');
 
-    $('ins-budget-lbl').textContent=`預算 $${fmt(insB)}`;
+    $('ins-budget-lbl').textContent=`預算總額度: $${fmt(insB)}`;
     $('ins-spent').textContent=`$${fmt(ins)}`;
     const ibP=insB>0?Math.min(Math.round(ins/insB*100),100):0;
     $('ins-bar').style.width=`${ibP}%`;
     const insOver = ibP>=100;
-    $('ins-bar').style.color = insOver ? 'var(--warn)' : 'var(--good)';
-    $('ins-bar').style.background = insOver ? 'var(--warn)' : 'var(--good)';
-    $('ins-remain-lbl').textContent=insR>=0?`剩餘 $${fmt(insR)}`:`超支 $${fmt(Math.abs(insR))}`;
-    $('ins-remain-lbl').style.color=insR<0?'var(--warn)':'var(--good)';
+    $('ins-bar').style.background = insOver ? 'var(--warn)' : 'var(--c-ins)';
+    $('ins-remain-lbl').textContent=insR>=0?`剩餘預算: $${fmt(insR)}`:`超支: $${fmt(Math.abs(insR))}`;
+    $('ins-remain-lbl').style.color=insR<0?'var(--warn)':'var(--c-ins)';
     renderList(list.filter(i=>i.cat==='insurance'), $('ins-list'), 'insurance');
 }
 
@@ -845,12 +962,12 @@ function updateDonut(data){
         type:'doughnut',
         data:{datasets:[{
             data,
-            backgroundColor:['#C15F3C','#45413C','#6B7F4F','#EEE9DD'],
+            backgroundColor:['#E5B53D','#D9603F','#9DA45E','#EDE8DC'],
             borderWidth:0,
-            hoverOffset:2
+            hoverOffset:3
         }]},
         options:{
-            cutout:'78%',
+            cutout:'76%',
             plugins:{legend:{display:false},tooltip:{enabled:false}},
             animation:{duration:800, easing:'easeOutCubic'}
         }
@@ -859,26 +976,27 @@ function updateDonut(data){
 
 function renderList(items, el, cat){
     if(!items.length){
-        el.innerHTML=`<div class="text-center py-6 text-[11px] zh" style="color:var(--ink-faint); letter-spacing:.2em">── 尚無紀錄 ──</div>`;
+        el.innerHTML=`<div class="text-center py-5 text-[12px] zh" style="color:var(--ink-faint); letter-spacing:.1em">目前無任何紀錄</div>`;
         return;
     }
+    const accent = cat==='living' ? 'var(--c-live)' : 'var(--c-ins)';
     el.innerHTML=items.map(item=>`
-    <div class="hover-row flex justify-between items-center py-3 px-1" style="border-bottom:1px solid var(--rule-soft)">
+    <div class="hover-row flex justify-between items-center py-3 px-3">
         <div class="flex-1 min-w-0 pr-3">
-            <div class="serif text-[15px] truncate zh font-medium">${item.name}</div>
-            <div class="text-[10px] zh mt-0.5" style="color:var(--ink-mute); letter-spacing:.05em">
+            <div class="text-[15px] truncate zh font-semibold">${item.name}</div>
+            <div class="text-[10.5px] zh mt-0.5" style="color:var(--ink-mute)">
                 ${item.lbl}${item.type==='installment'?` · 總額 $${fmt(item.total)}`:''}
             </div>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
-            <span class="serif tnum text-[15px]" style="color:var(--ink)">$${fmt(item.amt)}</span>
+        <div class="flex items-center gap-1 shrink-0">
+            <span class="tnum text-[15px] font-bold mr-1" style="color:var(--ink)">$${fmt(item.amt)}</span>
             <button onclick="editItem('${item.id}')" class="icon-btn" title="編輯">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 20h4l11-11-4-4L4 16v4z"/><path d="M14 6l4 4"/>
                 </svg>
             </button>
             <button onclick="delItem('${item.id}')" class="icon-btn danger" title="刪除">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 6h16M9 6V4h6v2M6 6l1 14h10l1-14"/>
                 </svg>
             </button>
@@ -907,25 +1025,25 @@ function renderHistory(){
                     type:'line',
                     label:'薪資',
                     data:t6.map(m=>S.salaries[m]||0),
-                    borderColor:'#C15F3C',
-                    backgroundColor:'rgba(193,95,60,.06)',
+                    borderColor:'#E5B53D',
+                    backgroundColor:'rgba(229,181,61,.1)',
                     fill:true,
                     tension:.35,
-                    pointBackgroundColor:'#FAF7F2',
-                    pointBorderColor:'#C15F3C',
-                    pointBorderWidth:1.5,
+                    pointBackgroundColor:'#FFFFFF',
+                    pointBorderColor:'#E5B53D',
+                    pointBorderWidth:2,
                     pointRadius:4,
                     pointHoverRadius:6,
-                    borderWidth:1.5
+                    borderWidth:2
                 },
                 {
                     type:'bar',
                     label:'支出',
                     data:t6.map(getSpend),
-                    backgroundColor:'rgba(69,65,60,.5)',
-                    borderRadius:0,
+                    backgroundColor:'rgba(217,96,63,.7)',
+                    borderRadius:6,
                     borderSkipped:false,
-                    barPercentage:0.5
+                    barPercentage:0.55
                 }
             ]
         },
@@ -935,17 +1053,17 @@ function renderHistory(){
                 legend:{
                     position:'bottom',
                     labels:{
-                        font:{family:"-apple-system, BlinkMacSystemFont, 'PingFang TC', sans-serif", weight:'500', size:11},
+                        font:{family:"-apple-system, BlinkMacSystemFont, 'PingFang TC', sans-serif", weight:'600', size:11},
                         padding:14, boxWidth:8, boxHeight:8,
-                        color:'#45413C'
+                        color:'#5C544A'
                     }
                 },
                 tooltip:{
-                    backgroundColor:'#1F1E1D',
+                    backgroundColor:'#2A2520',
                     titleFont:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:10, weight:'500'},
                     bodyFont:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:13, weight:'600'},
                     padding:10,
-                    cornerRadius:6,
+                    cornerRadius:8,
                     callbacks:{label:c=>` $${fmt(c.raw)}`}
                 }
             },
@@ -954,18 +1072,18 @@ function renderHistory(){
                     ticks:{
                         callback:v=>`$${fmt(v)}`,
                         font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:10},
-                        color:'#8A857C'
+                        color:'#9A9186'
                     },
-                    grid:{color:'rgba(229,223,211,.6)', drawBorder:false},
+                    grid:{color:'rgba(238,231,216,.8)', drawBorder:false},
                     border:{display:false}
                 },
                 x:{
                     ticks:{
-                        font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:11, weight:'500'},
-                        color:'#8A857C'
+                        font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:11, weight:'600'},
+                        color:'#9A9186'
                     },
                     grid:{display:false},
-                    border:{color:'#E5DFD3'}
+                    border:{color:'#EEE7D8'}
                 }
             }
         }
@@ -973,7 +1091,7 @@ function renderHistory(){
 
     const listEl=$('hist-list');
     if(!allM.length){
-        listEl.innerHTML='<div class="text-center py-10 zh text-[12px]" style="color:var(--ink-faint); letter-spacing:.2em">── 尚無歷史 ──</div>';
+        listEl.innerHTML='<div class="text-center py-10 zh text-[12px]" style="color:var(--ink-faint); letter-spacing:.1em">尚無歷史紀錄</div>';
         return;
     }
     listEl.innerHTML=allM.map(m=>{
@@ -984,25 +1102,23 @@ function renderHistory(){
         const over=sal>0&&total>sal*0.7;
         return `<div class="hcard">
             <div class="flex justify-between items-center mb-3">
-                <div>
-                    <div class="serif text-[17px] tnum zh font-medium">${mLbl(m)}</div>
-                </div>
-                <span class="tag zh" style="${over?'background:rgba(184,81,47,.1); color:var(--warn)':'background:var(--good-bg); color:var(--good)'}">
+                <div class="text-[16px] tnum zh font-bold">${mLbl(m)}</div>
+                <span class="tag zh" style="${over?'background:rgba(196, 81, 58, 0.1); color:var(--warn)':'background:var(--c-ins-bg); color:#6B7338'}">
                     ${over?'超預算':`儲蓄 ${sRate}%`}
                 </span>
             </div>
-            <div class="grid grid-cols-3 gap-3 text-center">
-                <div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="rounded-xl py-2.5" style="background: var(--bg-soft)">
                     <div class="field-label zh mb-1">薪資</div>
-                    <div class="serif tnum text-[14px]">$${fmt(sal)}</div>
+                    <div class="tnum text-[14px] font-bold">$${fmt(sal)}</div>
                 </div>
-                <div>
-                    <div class="field-label zh mb-1">生活</div>
-                    <div class="serif tnum text-[14px]" style="color:var(--ink-soft)">$${fmt(liv)}</div>
+                <div class="rounded-xl py-2.5" style="background: var(--c-live-bg)">
+                    <div class="field-label zh mb-1" style="color: #8B4A35">生活</div>
+                    <div class="tnum text-[14px] font-bold" style="color:var(--c-live)">$${fmt(liv)}</div>
                 </div>
-                <div>
-                    <div class="field-label zh mb-1">保險</div>
-                    <div class="serif tnum text-[14px]" style="color:var(--good)">$${fmt(ins)}</div>
+                <div class="rounded-xl py-2.5" style="background: var(--c-ins-bg)">
+                    <div class="field-label zh mb-1" style="color: #6B7338">保險</div>
+                    <div class="tnum text-[14px] font-bold" style="color:#6B7338">$${fmt(ins)}</div>
                 </div>
             </div>
         </div>`;
