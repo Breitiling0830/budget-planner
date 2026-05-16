@@ -4,12 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>631 預算規劃</title>
+<title>Budget Planner</title></title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Noto+Serif+TC:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
     --bg: #F5F1EB;
@@ -26,27 +23,27 @@
     --good: #6B7F4F;
     --good-bg: #E8E9D9;
     --warn: #B8512F;
+    --sys: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'PingFang TC', 'Helvetica Neue', system-ui, sans-serif;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body {
     background: var(--bg);
     color: var(--ink);
-    font-family: 'Inter', 'Noto Serif TC', sans-serif;
+    font-family: var(--sys);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
-    font-feature-settings: "ss01", "cv11";
 }
 .serif {
-    font-family: 'Fraunces', 'Noto Serif TC', serif;
-    font-optical-sizing: auto;
-    letter-spacing: -0.01em;
+    font-family: var(--sys);
+    letter-spacing: -0.015em;
 }
 .serif-display {
-    font-family: 'Fraunces', 'Noto Serif TC', serif;
-    font-variation-settings: "opsz" 144, "SOFT" 50;
-    letter-spacing: -0.025em;
+    font-family: var(--sys);
+    letter-spacing: -0.03em;
+    font-weight: 600;
 }
-.zh { font-family: 'Noto Serif TC', 'Fraunces', serif; }
+.zh { font-family: var(--sys); }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { -moz-appearance: textfield; }
@@ -63,7 +60,7 @@ border: none;
 border-bottom: 1px solid var(–rule);
 outline: none;
 padding: 10px 0;
-font-family: ‘Fraunces’, ‘Noto Serif TC’, serif;
+font-family: var(–sys);
 transition: border-color .25s;
 width: 100%;
 }
@@ -106,7 +103,7 @@ border-radius: 50%;
 display: flex; align-items: center; justify-content: center;
 color: var(–ink-soft);
 font-size: 18px; line-height: 0;
-font-family: ‘Fraunces’, serif;
+font-family: var(–sys);
 font-weight: 300;
 transition: all .2s;
 cursor: pointer;
@@ -204,28 +201,33 @@ background: var(–accent);
 
 .modal-bg {
 position: fixed; inset: 0;
-background: rgba(31, 30, 29, 0.4);
-backdrop-filter: blur(8px);
+background: rgba(31, 30, 29, 0.55);
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
 z-index: 50;
 display: flex;
-align-items: flex-end;
+align-items: center;
 justify-content: center;
+padding: 20px;
 }
-@media(min-width: 640px) { .modal-bg { align-items: center; } }
 .modal-box {
 background: var(–paper);
 width: 100%;
-max-width: 460px;
+max-width: 420px;
 border: 1px solid var(–rule);
-border-radius: 4px 4px 0 0;
-padding: 28px 24px 40px;
-transform: translateY(100%);
-transition: transform .5s cubic-bezier(.22,1,.36,1);
+border-radius: 16px;
+padding: 24px;
+box-shadow: 0 30px 80px rgba(31, 30, 29, 0.35), 0 10px 30px rgba(31, 30, 29, 0.15);
+transform: translateY(20px) scale(.96);
+opacity: 0;
+transition: transform .4s cubic-bezier(.22,1,.36,1), opacity .3s;
+max-height: calc(100vh - 40px);
+overflow-y: auto;
 }
-@media(min-width: 640px) {
-.modal-box { border-radius: 4px; padding: 32px; }
+.modal-box.open {
+transform: translateY(0) scale(1);
+opacity: 1;
 }
-.modal-box.open { transform: translateY(0); }
 
 #auth {
 position: fixed; inset: 0;
@@ -282,9 +284,9 @@ transform: translateX(-50%) translateY(0);
 .cdlg {
 background: var(–paper);
 border: 1px solid var(–rule);
-border-radius: 4px;
+border-radius: 14px;
 width: 320px;
-box-shadow: 0 30px 80px rgba(31,30,29,.25);
+box-shadow: 0 30px 80px rgba(31,30,29,.4), 0 10px 30px rgba(31,30,29,.2);
 }
 
 .hcard {
@@ -337,7 +339,7 @@ to   { opacity: 1; transform: translateY(0); }
             </svg>
         </div>
         <div class="field-label mb-3">Six · Three · One</div>
-        <h1 class="serif-display text-[40px] mb-4 zh font-light" style="color:var(--ink); line-height:1.15">
+        <h1 class="serif-display text-[40px] mb-4 zh font-normal" style="color:var(--ink); line-height:1.15">
             預算的<em style="color:var(--accent); font-style:italic">秩序</em>
         </h1>
         <p class="zh text-[14px] mb-12 leading-relaxed" style="color:var(--ink-soft)">
@@ -372,7 +374,7 @@ to   { opacity: 1; transform: translateY(0); }
                 <circle cx="22" cy="22" r="18"/>
                 <circle cx="22" cy="22" r="3" fill="var(--accent)" stroke="none"/>
             </svg>
-            <span class="serif font-medium text-[15px] tracking-wide">六三一</span>
+            <span class="font-semibold text-[15px] tracking-tight" style="letter-spacing:-0.02em">Budget Planner</span>
         </div>
         <div class="flex items-center gap-3">
             <img id="avatar" src="" class="w-7 h-7 rounded-full hidden" style="border:1px solid var(--rule)"/>
@@ -401,8 +403,8 @@ to   { opacity: 1; transform: translateY(0); }
         <div>
             <div class="field-label mb-2 zh">本月收入</div>
             <div class="relative flex items-baseline gap-2">
-                <span class="serif text-[28px] font-light" style="color:var(--ink-mute)">$</span>
-                <input type="number" id="salary" placeholder="0" class="ink-input serif text-[36px] font-light tnum" style="font-weight:300">
+                <span class="serif text-[28px] font-normal" style="color:var(--ink-mute)">$</span>
+                <input type="number" id="salary" placeholder="0" class="ink-input serif text-[36px] font-normal tnum">
             </div>
         </div>
     </div>
@@ -414,12 +416,12 @@ to   { opacity: 1; transform: translateY(0); }
                 <canvas id="donut" width="132" height="132"></canvas>
                 <div class="ring-center">
                     <div class="field-label">已使用</div>
-                    <div class="serif text-[26px] font-light tnum mt-0.5" id="used-pct">0<span class="text-[16px]" style="color:var(--ink-mute)">%</span></div>
+                    <div class="serif text-[26px] font-normal tnum mt-0.5" id="used-pct">0<span class="text-[16px]" style="color:var(--ink-mute)">%</span></div>
                 </div>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="field-label mb-1.5 zh">可自由支配</div>
-                <div class="serif text-[34px] font-light tnum tracking-tight leading-none" id="remain-val">$0</div>
+                <div class="serif text-[34px] font-normal tnum tracking-tight leading-none" id="remain-val">$0</div>
                 <div class="mt-4 pt-3 divider-thin">
                     <div class="flex justify-between items-baseline">
                         <span class="zh text-[12px]" style="color:var(--ink-mute)">每日建議</span>
@@ -467,7 +469,7 @@ to   { opacity: 1; transform: translateY(0); }
             </div>
             <div class="text-right">
                 <span class="serif text-[14px]" style="color:var(--ink-mute)">$</span>
-                <input type="number" id="savings" class="bg-transparent serif text-[22px] font-light tnum text-right outline-none w-28" value="0" style="border-bottom:1px solid var(--rule); padding-bottom:2px">
+                <input type="number" id="savings" class="bg-transparent serif text-[22px] font-normal tnum text-right outline-none w-28" value="0" style="border-bottom:1px solid var(--rule); padding-bottom:2px">
             </div>
         </div>
         <div class="flex justify-between items-center">
@@ -528,7 +530,7 @@ to   { opacity: 1; transform: translateY(0); }
     <div class="max-w-md mx-auto px-5 space-y-8">
         <div>
             <div class="field-label mb-2 zh">回顧</div>
-            <h2 class="serif-display text-[32px] zh font-light">歷史總覽</h2>
+            <h2 class="serif-display text-[32px] zh font-normal">歷史總覽</h2>
         </div>
         <div class="pt-2">
             <div class="field-label mb-4 zh">近六個月趨勢</div>
@@ -575,13 +577,13 @@ to   { opacity: 1; transform: translateY(0); }
         <div class="space-y-5">
             <div>
                 <label class="field-label zh block mb-1.5">項目</label>
-                <input type="text" id="m-name" placeholder="如：房租、水電費" class="ink-input serif text-[18px]" style="font-weight:400">
+                <input type="text" id="m-name" placeholder="如：房租、水電費" class="ink-input serif text-[18px]">
             </div>
             <div>
                 <label class="field-label zh block mb-1.5">金額</label>
                 <div class="flex items-baseline gap-2">
                     <span class="serif text-[18px]" style="color:var(--ink-mute)">$</span>
-                    <input type="number" id="m-amt" placeholder="0" class="ink-input serif text-[24px] font-light tnum">
+                    <input type="number" id="m-amt" placeholder="0" class="ink-input serif text-[24px] font-normal tnum">
                 </div>
             </div>
             <div id="inst-fields" class="hidden space-y-4 pt-2">
@@ -878,17 +880,17 @@ function renderHistory(){
                 legend:{
                     position:'bottom',
                     labels:{
-                        font:{family:"'Noto Serif TC', serif", weight:'500', size:11},
+                        font:{family:"-apple-system, BlinkMacSystemFont, 'PingFang TC', sans-serif", weight:'500', size:11},
                         padding:14, boxWidth:8, boxHeight:8,
                         color:'#45413C'
                     }
                 },
                 tooltip:{
                     backgroundColor:'#1F1E1D',
-                    titleFont:{family:"'Inter', sans-serif", size:10, weight:'500'},
-                    bodyFont:{family:"'Fraunces', serif", size:13},
+                    titleFont:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:10, weight:'500'},
+                    bodyFont:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:13, weight:'600'},
                     padding:10,
-                    cornerRadius:2,
+                    cornerRadius:6,
                     callbacks:{label:c=>` $${fmt(c.raw)}`}
                 }
             },
@@ -896,7 +898,7 @@ function renderHistory(){
                 y:{
                     ticks:{
                         callback:v=>`$${fmt(v)}`,
-                        font:{family:"'Fraunces', serif", size:10},
+                        font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:10},
                         color:'#8A857C'
                     },
                     grid:{color:'rgba(229,223,211,.6)', drawBorder:false},
@@ -904,7 +906,7 @@ function renderHistory(){
                 },
                 x:{
                     ticks:{
-                        font:{family:"'Fraunces', serif", size:11},
+                        font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:11, weight:'500'},
                         color:'#8A857C'
                     },
                     grid:{display:false},
@@ -980,7 +982,7 @@ window.editItem = function(id){
     $('modal').classList.remove('hidden');
     requestAnimationFrame(()=>$('mbox').classList.add('open'));
 };
-window.closeModal = function(){ $('mbox').classList.remove('open'); setTimeout(()=>$('modal').classList.add('hidden'),420); };
+window.closeModal = function(){ $('mbox').classList.remove('open'); setTimeout(()=>$('modal').classList.add('hidden'),350); };
 window.bgClick = function(e){ if(e.target===$('modal')) closeModal(); };
 window.setType = function(t){
     $('m-type').value=t;
