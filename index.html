@@ -2,246 +2,555 @@
 
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>631 薪水預算分配器</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        :root {
-            --bg: #F2F2F7; --card: #FFF; --main: #1C1C1E; --sec: #3A3A3C; --ter: #8E8E93;
-            --orange: #FF6B35; --green: #34C759; --red: #FF3B30; --yellow: #FBBF24;
-            --div: rgba(60,60,67,0.12); --shadow: 0 2px 20px rgba(0,0,0,0.06);
-        }
-        * { box-sizing: border-box; }
-        body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--bg); color:var(--main); -webkit-font-smoothing:antialiased; min-height:100vh; }
-        input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
-        .card{background:var(--card);border-radius:20px;box-shadow:var(--shadow)}
-        .ios-input{background:rgba(118,118,128,.08);border-radius:12px;border:1.5px solid transparent;outline:none;transition:all .2s;width:100%;padding:14px 16px;font-size:16px;font-weight:600;color:var(--main)}
-        .ios-input:focus{border-color:var(--orange);background:#fff;box-shadow:0 0 0 4px rgba(255,107,53,.1)}
-        .seg{background:rgba(118,118,128,.12);border-radius:10px;padding:2px;display:flex}
-        .seg-btn{border-radius:8px;padding:7px 0;font-size:13px;font-weight:700;color:var(--sec);transition:all .2s;cursor:pointer;flex:1;text-align:center}
-        .seg-btn.on{background:#fff;color:var(--main);box-shadow:0 2px 8px rgba(0,0,0,.12)}
-        .li{padding:13px 0;border-bottom:.5px solid var(--div)}
-        .li:last-child{border-bottom:none}
-        .pt{height:6px;background:rgba(118,118,128,.15);border-radius:99px;overflow:hidden}
-        .pf{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
-        .modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center}
-        @media(min-width:640px){.modal-bg{align-items:center}}
-        .modal-box{background:#fff;width:100%;max-width:480px;border-radius:28px 28px 0 0;padding:24px 24px 48px;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
-        @media(min-width:640px){.modal-box{border-radius:28px;padding:28px}}
-        .modal-box.open{transform:translateY(0)}
-        #auth{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,#1C1C1E,#2C2C2E);display:flex;align-items:center;justify-content:center}
-        .gbtn{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:16px 28px;font-weight:700;font-size:16px;cursor:pointer;border:none;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .2s;color:#1C1C1E}
-        .gbtn:hover{transform:scale(1.02)}.gbtn:active{transform:scale(.98)}
-        .ring{position:relative;width:150px;height:150px;flex-shrink:0}
-        .ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-        .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(28,28,30,.92);backdrop-filter:blur(10px);color:#fff;border-radius:99px;padding:10px 20px;font-size:13px;font-weight:700;z-index:200;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none}
-        .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-        .hcard{border-left:4px solid var(--orange);padding-left:14px}
-        .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800}
-        .cdlg{background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-radius:16px;overflow:hidden;width:280px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-        .nav-tab{transition:all .2s}
-        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#D1D1D6;border-radius:99px}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>631 預算規劃</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Noto+Serif+TC:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #F5F1EB;
+    --paper: #FAF7F2;
+    --ink: #1F1E1D;
+    --ink-soft: #45413C;
+    --ink-mute: #8A857C;
+    --ink-faint: #C9C2B6;
+    --rule: #E5DFD3;
+    --rule-soft: #EEE9DD;
+    --accent: #C15F3C;
+    --accent-soft: #E8C7B5;
+    --accent-bg: #F0E1D5;
+    --good: #6B7F4F;
+    --good-bg: #E8E9D9;
+    --warn: #B8512F;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', 'Noto Serif TC', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    font-feature-settings: "ss01", "cv11";
+}
+.serif {
+    font-family: 'Fraunces', 'Noto Serif TC', serif;
+    font-optical-sizing: auto;
+    letter-spacing: -0.01em;
+}
+.serif-display {
+    font-family: 'Fraunces', 'Noto Serif TC', serif;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+    letter-spacing: -0.025em;
+}
+.zh { font-family: 'Noto Serif TC', 'Fraunces', serif; }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+.paper {
+background: var(–paper);
+border: 1px solid var(–rule);
+border-radius: 4px;
+}
+.rule { border-color: var(–rule); }
+.ink-input {
+background: transparent;
+border: none;
+border-bottom: 1px solid var(–rule);
+outline: none;
+padding: 10px 0;
+font-family: ‘Fraunces’, ‘Noto Serif TC’, serif;
+transition: border-color .25s;
+width: 100%;
+}
+.ink-input:focus { border-bottom-color: var(–accent); }
+.field-label {
+font-size: 10px;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(–ink-mute);
+font-weight: 500;
+}
+.btn-ghost {
+background: transparent;
+border: 1px solid var(–rule);
+color: var(–ink-soft);
+padding: 8px 14px;
+border-radius: 2px;
+font-size: 12px;
+letter-spacing: 0.04em;
+transition: all .2s;
+cursor: pointer;
+}
+.btn-ghost:hover { border-color: var(–ink-soft); color: var(–ink); }
+.btn-accent {
+background: var(–ink);
+color: var(–paper);
+border: 1px solid var(–ink);
+padding: 8px 16px;
+border-radius: 2px;
+font-size: 12px;
+letter-spacing: 0.06em;
+cursor: pointer;
+transition: all .2s;
+}
+.btn-accent:hover { background: var(–accent); border-color: var(–accent); }
+.add-btn {
+width: 28px; height: 28px;
+border: 1px solid var(–rule);
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+color: var(–ink-soft);
+font-size: 18px; line-height: 0;
+font-family: ‘Fraunces’, serif;
+font-weight: 300;
+transition: all .2s;
+cursor: pointer;
+background: transparent;
+}
+.add-btn:hover { border-color: var(–accent); color: var(–accent); }
+.icon-btn {
+width: 26px; height: 26px;
+display: inline-flex; align-items: center; justify-content: center;
+color: var(–ink-mute);
+transition: color .2s;
+background: none; border: none; cursor: pointer;
+border-radius: 50%;
+}
+.icon-btn:hover { color: var(–ink); }
+.icon-btn.danger:hover { color: var(–warn); }
+
+.divider-thin { border-bottom: 1px solid var(–rule-soft); }
+.divider-thick { border-bottom: 1px solid var(–rule); }
+
+.seg {
+display: flex;
+border: 1px solid var(–rule);
+border-radius: 2px;
+padding: 2px;
+}
+.seg-btn {
+flex: 1;
+text-align: center;
+padding: 8px 0;
+font-size: 12px;
+letter-spacing: 0.06em;
+color: var(–ink-mute);
+cursor: pointer;
+transition: all .2s;
+border-radius: 1px;
+}
+.seg-btn.on {
+background: var(–ink);
+color: var(–paper);
+}
+
+.pt {
+height: 1px;
+background: var(–rule);
+position: relative;
+overflow: visible;
+}
+.pf {
+height: 1px;
+transition: width .8s cubic-bezier(.22,1,.36,1);
+position: relative;
+}
+.pf::after {
+content: ‘’;
+position: absolute;
+right: -3px; top: -2px;
+width: 5px; height: 5px;
+background: currentColor;
+border-radius: 50%;
+}
+
+.tag {
+display: inline-flex;
+align-items: center;
+padding: 2px 9px;
+border-radius: 2px;
+font-size: 10px;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+font-weight: 500;
+}
+
+.nav-tab {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 12px 0 14px;
+gap: 4px;
+cursor: pointer;
+transition: color .2s;
+color: var(–ink-mute);
+position: relative;
+}
+.nav-tab.active { color: var(–ink); }
+.nav-tab.active::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 50%;
+transform: translateX(-50%);
+width: 20px; height: 1px;
+background: var(–accent);
+}
+
+.modal-bg {
+position: fixed; inset: 0;
+background: rgba(31, 30, 29, 0.4);
+backdrop-filter: blur(8px);
+z-index: 50;
+display: flex;
+align-items: flex-end;
+justify-content: center;
+}
+@media(min-width: 640px) { .modal-bg { align-items: center; } }
+.modal-box {
+background: var(–paper);
+width: 100%;
+max-width: 460px;
+border: 1px solid var(–rule);
+border-radius: 4px 4px 0 0;
+padding: 28px 24px 40px;
+transform: translateY(100%);
+transition: transform .5s cubic-bezier(.22,1,.36,1);
+}
+@media(min-width: 640px) {
+.modal-box { border-radius: 4px; padding: 32px; }
+}
+.modal-box.open { transform: translateY(0); }
+
+#auth {
+position: fixed; inset: 0;
+z-index: 100;
+background: var(–bg);
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.gbtn {
+display: inline-flex;
+align-items: center;
+gap: 12px;
+background: var(–ink);
+color: var(–paper);
+border-radius: 2px;
+padding: 14px 24px;
+font-size: 14px;
+letter-spacing: 0.04em;
+cursor: pointer;
+border: none;
+transition: all .2s;
+}
+.gbtn:hover { background: var(–accent); }
+
+.ring-wrap { position: relative; width: 132px; height: 132px; flex-shrink: 0; }
+.ring-center {
+position: absolute; inset: 0;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+text-align: center;
+}
+
+.toast {
+position: fixed;
+top: 80px; left: 50%;
+transform: translateX(-50%) translateY(-12px);
+background: var(–ink);
+color: var(–paper);
+padding: 10px 20px;
+border-radius: 2px;
+font-size: 13px;
+letter-spacing: 0.04em;
+z-index: 200;
+opacity: 0;
+transition: all .35s cubic-bezier(.22,1,.36,1);
+pointer-events: none;
+}
+.toast.on {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
+
+.cdlg {
+background: var(–paper);
+border: 1px solid var(–rule);
+border-radius: 4px;
+width: 320px;
+box-shadow: 0 30px 80px rgba(31,30,29,.25);
+}
+
+.hcard {
+border-left: 1px solid var(–rule);
+padding-left: 16px;
+position: relative;
+}
+.hcard::before {
+content: ‘’;
+position: absolute;
+left: -3px; top: 8px;
+width: 5px; height: 5px;
+background: var(–accent);
+border-radius: 50%;
+}
+
+::-webkit-scrollbar { width: 0; }
+
+/* tabular figures for numbers */
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* subtle pull animation */
+@keyframes rise {
+from { opacity: 0; transform: translateY(8px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise .5s cubic-bezier(.22,1,.36,1) both; }
+.rise-1 { animation-delay: .05s; }
+.rise-2 { animation-delay: .12s; }
+.rise-3 { animation-delay: .19s; }
+.rise-4 { animation-delay: .26s; }
+.rise-5 { animation-delay: .33s; }
+
+.hover-row { transition: background-color .15s; border-radius: 2px; }
+.hover-row:hover { background-color: rgba(193, 95, 60, 0.04); }
+</style>
+
 </head>
 <body>
 
 <!-- AUTH -->
 
 <div id="auth">
-    <div class="text-center px-8">
-        <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mx-auto mb-6 shadow-2xl">
-            <i class="fa-solid fa-piggy-bank text-white text-3xl"></i>
+    <div class="text-center px-8 max-w-sm rise">
+        <div class="mb-12 flex justify-center">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="var(--accent)" stroke-width="1.2">
+                <circle cx="22" cy="22" r="18"/>
+                <path d="M 13 22 L 22 13 L 31 22 L 22 31 Z" stroke-linejoin="round"/>
+                <circle cx="22" cy="22" r="3" fill="var(--accent)" stroke="none"/>
+            </svg>
         </div>
-        <h1 class="text-white text-3xl font-black mb-2 tracking-tight">631 預算規劃</h1>
-        <p class="text-white/50 text-[15px] mb-12 font-medium leading-relaxed">儲蓄 · 生活 · 保險<br>Google 登入，跨裝置資料同步</p>
-        <button class="gbtn mx-auto" id="login-btn">
-            <svg width="22" height="22" viewBox="0 0 48 48">
+        <div class="field-label mb-3">Six · Three · One</div>
+        <h1 class="serif-display text-[40px] mb-4 zh font-light" style="color:var(--ink); line-height:1.15">
+            預算的<em style="color:var(--accent); font-style:italic">秩序</em>
+        </h1>
+        <p class="zh text-[14px] mb-12 leading-relaxed" style="color:var(--ink-soft)">
+            把每一塊收入，分給該去的地方。<br>
+            生活、儲蓄、保險——各得其所。
+        </p>
+        <button class="gbtn" id="login-btn">
+            <svg width="16" height="16" viewBox="0 0 48 48">
                 <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
                 <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
                 <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
                 <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
             </svg>
-            使用 Google 帳號登入
+            <span class="zh">以 Google 繼續</span>
         </button>
-        <p class="text-white/30 text-[12px] mt-6 font-medium">資料儲存於 Firebase，安全加密</p>
+        <p class="text-[11px] mt-8" style="color:var(--ink-mute); letter-spacing:.1em">
+            SECURED BY FIREBASE
+        </p>
     </div>
 </div>
 
 <!-- APP -->
 
 <div id="app" class="hidden">
-    <!-- Topbar -->
-    <div class="sticky top-0 z-30 bg-[var(--bg)]/90 backdrop-blur-xl border-b border-black/5">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-                    <i class="fa-solid fa-piggy-bank text-white text-xs"></i>
-                </div>
-                <span class="font-black text-[17px] tracking-tight">631 預算</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <img id="avatar" src="" class="w-8 h-8 rounded-full hidden border-2 border-orange-200"/>
-                <button id="logout-btn" class="hidden text-[12px] font-bold text-[var(--ter)] bg-[var(--bg)] px-3 py-1.5 rounded-lg">登出</button>
-            </div>
-        </div>
-    </div>
 
 ```
+<!-- Topbar -->
+<div class="sticky top-0 z-30" style="background: rgba(245, 241, 235, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule);">
+    <div class="max-w-md mx-auto px-5 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2.5">
+            <svg width="20" height="20" viewBox="0 0 44 44" fill="none" stroke="var(--accent)" stroke-width="1.5">
+                <circle cx="22" cy="22" r="18"/>
+                <circle cx="22" cy="22" r="3" fill="var(--accent)" stroke="none"/>
+            </svg>
+            <span class="serif font-medium text-[15px] tracking-wide">六三一</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <img id="avatar" src="" class="w-7 h-7 rounded-full hidden" style="border:1px solid var(--rule)"/>
+            <button id="logout-btn" class="hidden text-[11px]" style="color:var(--ink-mute); letter-spacing:.1em">登出</button>
+        </div>
+    </div>
+</div>
+
 <!-- Main content -->
-<div class="max-w-md mx-auto px-4 pb-28 pt-4 space-y-4" id="main-page">
+<div class="max-w-md mx-auto px-5 pb-28 pt-6 space-y-8" id="main-page">
 
     <!-- Month + Salary -->
-    <div class="card p-5">
-        <div class="flex justify-between items-center mb-4">
-            <button id="prev-btn" class="w-9 h-9 rounded-full bg-[var(--bg)] flex items-center justify-center">
-                <i class="fa-solid fa-chevron-left text-sm text-[var(--sec)]"></i>
+    <div class="rise rise-1">
+        <div class="flex justify-between items-center mb-6">
+            <button id="prev-btn" class="icon-btn" style="width:32px; height:32px">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 6l-6 6 6 6"/></svg>
             </button>
             <div class="text-center">
-                <div class="text-[11px] font-bold text-[var(--ter)] uppercase tracking-wider mb-0.5">月度預算規劃</div>
-                <div class="text-[22px] font-black" id="month-label">載入中</div>
+                <div class="field-label mb-1">月度規劃</div>
+                <div class="serif text-[22px] zh font-medium" id="month-label">載入中</div>
             </div>
-            <button id="next-btn" class="w-9 h-9 rounded-full bg-[var(--bg)] flex items-center justify-center">
-                <i class="fa-solid fa-chevron-right text-sm text-[var(--sec)]"></i>
+            <button id="next-btn" class="icon-btn" style="width:32px; height:32px">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
             </button>
         </div>
-        <div class="relative">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-black text-[var(--ter)]">$</span>
-            <input type="number" id="salary" placeholder="輸入本月薪資" class="ios-input text-[22px] font-black text-center tracking-tight" style="padding-left:36px">
+        <div>
+            <div class="field-label mb-2 zh">本月收入</div>
+            <div class="relative flex items-baseline gap-2">
+                <span class="serif text-[28px] font-light" style="color:var(--ink-mute)">$</span>
+                <input type="number" id="salary" placeholder="0" class="ink-input serif text-[36px] font-light tnum" style="font-weight:300">
+            </div>
         </div>
     </div>
 
     <!-- Overview -->
-    <div class="card p-5">
-        <div class="flex items-center gap-4 mb-5">
-            <div class="flex-1 min-w-0">
-                <div class="text-[11px] font-bold text-[var(--ter)] uppercase tracking-wider mb-1">可自由運用</div>
-                <div class="text-[38px] font-black tracking-tight leading-none" id="remain-val">$0</div>
-                <div class="flex items-center gap-2 mt-2.5">
-                    <span class="text-[12px] text-[var(--ter)] font-bold">每日建議</span>
-                    <span class="text-[15px] font-black text-[var(--orange)]" id="daily-val">$0</span>
+    <div class="rise rise-2">
+        <div class="flex items-center gap-5 mb-7">
+            <div class="ring-wrap">
+                <canvas id="donut" width="132" height="132"></canvas>
+                <div class="ring-center">
+                    <div class="field-label">已使用</div>
+                    <div class="serif text-[26px] font-light tnum mt-0.5" id="used-pct">0<span class="text-[16px]" style="color:var(--ink-mute)">%</span></div>
                 </div>
             </div>
-            <div class="ring">
-                <canvas id="donut" width="150" height="150"></canvas>
-                <div class="ring-c">
-                    <div class="text-[10px] font-bold text-[var(--ter)]">已使用</div>
-                    <div class="text-[20px] font-black" id="used-pct">0%</div>
+            <div class="flex-1 min-w-0">
+                <div class="field-label mb-1.5 zh">可自由支配</div>
+                <div class="serif text-[34px] font-light tnum tracking-tight leading-none" id="remain-val">$0</div>
+                <div class="mt-4 pt-3 divider-thin">
+                    <div class="flex justify-between items-baseline">
+                        <span class="zh text-[12px]" style="color:var(--ink-mute)">每日建議</span>
+                        <span class="serif text-[16px] tnum" id="daily-val" style="color:var(--accent)">$0</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-3 gap-2">
-            <div class="bg-orange-50 rounded-2xl p-3 text-center">
-                <div class="text-[10px] font-bold text-orange-400 mb-0.5">儲蓄</div>
-                <div class="text-[15px] font-black text-orange-500" id="sav-pct">30%</div>
-                <div class="text-[10px] font-bold text-orange-400 mt-0.5" id="sav-amt">$0</div>
+
+        <!-- Allocation breakdown -->
+        <div class="space-y-3">
+            <div class="flex items-center justify-between text-[13px]">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--accent)"></div>
+                    <span class="zh" style="color:var(--ink-soft)">儲蓄</span>
+                    <span class="field-label tnum" id="sav-pct">30%</span>
+                </div>
+                <span class="serif tnum" id="sav-amt">$0</span>
             </div>
-            <div class="bg-yellow-50 rounded-2xl p-3 text-center">
-                <div class="text-[10px] font-bold text-yellow-600 mb-0.5">生活</div>
-                <div class="text-[15px] font-black text-yellow-600" id="liv-pct">0%</div>
-                <div class="text-[10px] font-bold text-yellow-500 mt-0.5" id="liv-amt">$0</div>
+            <div class="flex items-center justify-between text-[13px]">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--ink-soft)"></div>
+                    <span class="zh" style="color:var(--ink-soft)">生活</span>
+                    <span class="field-label tnum" id="liv-pct">0%</span>
+                </div>
+                <span class="serif tnum" id="liv-amt">$0</span>
             </div>
-            <div class="bg-green-50 rounded-2xl p-3 text-center">
-                <div class="text-[10px] font-bold text-green-500 mb-0.5">保險</div>
-                <div class="text-[15px] font-black text-green-600" id="ins-pct">0%</div>
-                <div class="text-[10px] font-bold text-green-500 mt-0.5" id="ins-amt">$0</div>
+            <div class="flex items-center justify-between text-[13px]">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--good)"></div>
+                    <span class="zh" style="color:var(--ink-soft)">保險</span>
+                    <span class="field-label tnum" id="ins-pct">0%</span>
+                </div>
+                <span class="serif tnum" id="ins-amt">$0</span>
             </div>
         </div>
     </div>
 
     <!-- Savings -->
-    <div class="card p-5">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-orange-50 flex items-center justify-center">
-                    <i class="fa-solid fa-piggy-bank text-[var(--orange)] text-lg"></i>
-                </div>
-                <div>
-                    <div class="font-black text-[16px]">儲蓄計畫</div>
-                    <div class="text-[12px] text-[var(--ter)] font-bold mt-0.5" id="sav-lbl">預設 30%</div>
-                </div>
+    <div class="rise rise-3 pt-6 divider-thick">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <div class="field-label mb-1 zh">儲蓄</div>
+                <div class="serif text-[18px] zh font-medium">每月留下的</div>
             </div>
-            <div class="flex items-center gap-1 bg-[var(--bg)] rounded-xl px-3 py-2.5">
-                <span class="font-black text-[var(--ter)] text-lg">$</span>
-                <input type="number" id="savings" class="bg-transparent text-[22px] font-black text-right w-24 outline-none" value="0">
+            <div class="text-right">
+                <span class="serif text-[14px]" style="color:var(--ink-mute)">$</span>
+                <input type="number" id="savings" class="bg-transparent serif text-[22px] font-light tnum text-right outline-none w-28" value="0" style="border-bottom:1px solid var(--rule); padding-bottom:2px">
             </div>
         </div>
-        <button id="reset-sav-btn" class="hidden mt-3 text-[12px] font-black text-[var(--orange)] bg-orange-50 px-3 py-1.5 rounded-lg" onclick="resetSavings()">↩ 重置為預設 30%</button>
+        <div class="flex justify-between items-center">
+            <span class="text-[11px] zh" style="color:var(--ink-mute)" id="sav-lbl">預設 30%</span>
+            <button id="reset-sav-btn" class="hidden text-[11px] zh" style="color:var(--accent); letter-spacing:.05em" onclick="resetSavings()">
+                ← 重置為 30%
+            </button>
+        </div>
     </div>
 
     <!-- Living -->
-    <div class="card p-5">
-        <div class="flex justify-between items-center mb-4">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-yellow-50 flex items-center justify-center">
-                    <i class="fa-solid fa-credit-card text-yellow-500 text-lg"></i>
-                </div>
-                <div>
-                    <div class="font-black text-[16px]">生活支出</div>
-                    <div class="text-[12px] text-[var(--ter)] font-bold mt-0.5" id="liv-budget-lbl">預算 $0</div>
-                </div>
+    <div class="rise rise-4 pt-6 divider-thick">
+        <div class="flex justify-between items-start mb-5">
+            <div>
+                <div class="field-label mb-1 zh">生活</div>
+                <div class="serif text-[18px] zh font-medium">日常支出</div>
+                <div class="text-[11px] zh mt-1" style="color:var(--ink-mute)" id="liv-budget-lbl">預算 $0</div>
             </div>
-            <button onclick="openModal('living')" class="w-9 h-9 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center text-xl font-black hover:bg-yellow-200 transition-colors">+</button>
+            <button class="add-btn" onclick="openModal('living')">+</button>
         </div>
-        <div class="flex justify-between text-[13px] font-bold mb-2">
-            <span class="text-[var(--ter)]">已支出 <span id="liv-spent" class="text-[var(--main)]">$0</span></span>
-            <span id="liv-remain-lbl" class="text-yellow-600">剩餘 $0</span>
+        <div class="flex justify-between items-baseline mb-2">
+            <span class="text-[12px] zh" style="color:var(--ink-mute)">
+                已支出 <span class="serif tnum" id="liv-spent" style="color:var(--ink)">$0</span>
+            </span>
+            <span class="text-[12px] zh tnum" id="liv-remain-lbl" style="color:var(--ink-soft)">剩餘 $0</span>
         </div>
-        <div class="pt mb-4"><div id="liv-bar" class="pf" style="width:0%;background:var(--yellow)"></div></div>
-        <div id="liv-list"></div>
+        <div class="pt mb-5">
+            <div id="liv-bar" class="pf" style="width:0%; color:var(--ink-soft); background:var(--ink-soft)"></div>
+        </div>
+        <div id="liv-list" class="space-y-0"></div>
     </div>
 
     <!-- Insurance -->
-    <div class="card p-5">
-        <div class="flex justify-between items-center mb-4">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-green-50 flex items-center justify-center">
-                    <i class="fa-solid fa-shield-halved text-green-500 text-lg"></i>
-                </div>
-                <div>
-                    <div class="font-black text-[16px]">保險支出</div>
-                    <div class="text-[12px] text-[var(--ter)] font-bold mt-0.5" id="ins-budget-lbl">預算 $0</div>
-                </div>
+    <div class="rise rise-5 pt-6 divider-thick">
+        <div class="flex justify-between items-start mb-5">
+            <div>
+                <div class="field-label mb-1 zh">保險</div>
+                <div class="serif text-[18px] zh font-medium">保障規劃</div>
+                <div class="text-[11px] zh mt-1" style="color:var(--ink-mute)" id="ins-budget-lbl">預算 $0</div>
             </div>
-            <button onclick="openModal('insurance')" class="w-9 h-9 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl font-black hover:bg-green-200 transition-colors">+</button>
+            <button class="add-btn" onclick="openModal('insurance')">+</button>
         </div>
-        <div class="flex justify-between text-[13px] font-bold mb-2">
-            <span class="text-[var(--ter)]">已支出 <span id="ins-spent" class="text-[var(--main)]">$0</span></span>
-            <span id="ins-remain-lbl" class="text-green-600">剩餘 $0</span>
+        <div class="flex justify-between items-baseline mb-2">
+            <span class="text-[12px] zh" style="color:var(--ink-mute)">
+                已支出 <span class="serif tnum" id="ins-spent" style="color:var(--ink)">$0</span>
+            </span>
+            <span class="text-[12px] zh tnum" id="ins-remain-lbl" style="color:var(--good)">剩餘 $0</span>
         </div>
-        <div class="pt mb-4"><div id="ins-bar" class="pf" style="width:0%;background:var(--green)"></div></div>
-        <div id="ins-list"></div>
+        <div class="pt mb-5">
+            <div id="ins-bar" class="pf" style="width:0%; color:var(--good); background:var(--good)"></div>
+        </div>
+        <div id="ins-list" class="space-y-0"></div>
     </div>
 </div>
 
 <!-- History page -->
-<div id="hist-page" class="hidden fixed z-20 bg-[var(--bg)] overflow-y-auto pb-28 pt-4" style="top:57px;inset:0">
-    <div class="max-w-md mx-auto px-4 space-y-4">
-        <div class="text-[22px] font-black px-1">歷史總覽</div>
-        <div class="card p-5">
-            <div class="text-[15px] font-black mb-4">近 6 個月收支趨勢</div>
-            <canvas id="trend" height="190"></canvas>
+<div id="hist-page" class="hidden fixed z-20 overflow-y-auto pb-28 pt-6" style="top:57px; inset:0; background:var(--bg)">
+    <div class="max-w-md mx-auto px-5 space-y-8">
+        <div>
+            <div class="field-label mb-2 zh">回顧</div>
+            <h2 class="serif-display text-[32px] zh font-light">歷史總覽</h2>
         </div>
-        <div class="card p-5">
-            <div class="text-[15px] font-black mb-5">各月明細</div>
-            <div id="hist-list" class="space-y-5"></div>
+        <div class="pt-2">
+            <div class="field-label mb-4 zh">近六個月趨勢</div>
+            <canvas id="trend" height="180"></canvas>
+        </div>
+        <div class="pt-6 divider-thick">
+            <div class="field-label mb-5 zh">各月明細</div>
+            <div id="hist-list" class="space-y-6"></div>
         </div>
     </div>
 </div>
 
 <!-- Bottom nav -->
-<div class="fixed bottom-0 inset-x-0 z-30 bg-white/90 backdrop-blur-xl border-t border-black/8">
+<div class="fixed bottom-0 inset-x-0 z-30" style="background: rgba(245, 241, 235, 0.92); backdrop-filter: blur(12px); border-top: 1px solid var(--rule);">
     <div class="max-w-md mx-auto flex">
-        <button class="nav-tab flex-1 flex flex-col items-center py-3 gap-1" data-p="main" onclick="goPage('main')" style="color:var(--orange)">
-            <i class="fa-solid fa-house text-lg"></i>
-            <span class="text-[10px] font-black">本月</span>
+        <button class="nav-tab active" data-p="main" onclick="goPage('main')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>
+            <span class="text-[10px] zh" style="letter-spacing:.1em">本月</span>
         </button>
-        <button class="nav-tab flex-1 flex flex-col items-center py-3 gap-1" data-p="hist" onclick="goPage('hist')" style="color:var(--ter)">
-            <i class="fa-solid fa-clock-rotate-left text-lg"></i>
-            <span class="text-[10px] font-black">歷史</span>
+        <button class="nav-tab" data-p="hist" onclick="goPage('hist')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <span class="text-[10px] zh" style="letter-spacing:.1em">歷史</span>
         </button>
     </div>
 </div>
@@ -253,48 +562,47 @@
 
 <div id="modal" class="modal-bg hidden" onclick="bgClick(event)">
     <div class="modal-box" id="mbox">
-        <div class="flex justify-between items-center mb-6">
-            <button onclick="closeModal()" class="text-[15px] font-bold text-[var(--ter)] px-2 py-1">取消</button>
-            <h3 class="text-[17px] font-black" id="m-title">新增紀錄</h3>
-            <button onclick="submitModal()" class="text-[15px] font-black text-[var(--orange)] px-2 py-1" id="m-ok">確認</button>
+        <div class="flex justify-between items-center mb-7">
+            <button onclick="closeModal()" class="text-[12px] zh" style="color:var(--ink-mute); letter-spacing:.06em">取消</button>
+            <h3 class="serif text-[16px] zh font-medium" id="m-title">新增紀錄</h3>
+            <button onclick="submitModal()" class="text-[12px] zh font-medium" style="color:var(--accent); letter-spacing:.06em" id="m-ok">確認</button>
         </div>
-        <div class="seg mb-6">
-            <div class="seg-btn on" id="seg-s" onclick="setType('single')">單筆支出</div>
-            <div class="seg-btn" id="seg-i" onclick="setType('installment')">分期付款</div>
+        <div class="seg mb-7">
+            <div class="seg-btn on zh" id="seg-s" onclick="setType('single')">單筆</div>
+            <div class="seg-btn zh" id="seg-i" onclick="setType('installment')">分期</div>
         </div>
         <input type="hidden" id="m-cat"><input type="hidden" id="m-id"><input type="hidden" id="m-type" value="single">
-        <div class="space-y-4">
+        <div class="space-y-5">
             <div>
-                <label class="text-[11px] font-black text-[var(--ter)] uppercase tracking-wider ml-1 mb-1.5 block">項目名稱</label>
-                <input type="text" id="m-name" placeholder="如：房租、水電費" class="ios-input">
+                <label class="field-label zh block mb-1.5">項目</label>
+                <input type="text" id="m-name" placeholder="如：房租、水電費" class="ink-input serif text-[18px]" style="font-weight:400">
             </div>
             <div>
-                <label class="text-[11px] font-black text-[var(--ter)] uppercase tracking-wider ml-1 mb-1.5 block">支出金額</label>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-black text-[var(--ter)] text-lg">$</span>
-                    <input type="number" id="m-amt" placeholder="0" class="ios-input" style="padding-left:36px">
+                <label class="field-label zh block mb-1.5">金額</label>
+                <div class="flex items-baseline gap-2">
+                    <span class="serif text-[18px]" style="color:var(--ink-mute)">$</span>
+                    <input type="number" id="m-amt" placeholder="0" class="ink-input serif text-[24px] font-light tnum">
                 </div>
             </div>
-            <div id="inst-fields" class="hidden space-y-3">
-                <div class="grid grid-cols-2 gap-3">
+            <div id="inst-fields" class="hidden space-y-4 pt-2">
+                <div class="grid grid-cols-2 gap-5">
                     <div>
-                        <label class="text-[11px] font-black text-[var(--ter)] uppercase tracking-wider ml-1 mb-1.5 block">總期數</label>
-                        <div class="relative">
-                            <input type="number" id="m-periods" placeholder="12" class="ios-input pr-10 text-center">
-                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] font-black text-[var(--ter)]">期</span>
+                        <label class="field-label zh block mb-1.5">總期數</label>
+                        <div class="flex items-baseline gap-2">
+                            <input type="number" id="m-periods" placeholder="12" class="ink-input serif text-[20px] tnum text-center">
+                            <span class="text-[12px] zh" style="color:var(--ink-mute)">期</span>
                         </div>
                     </div>
                     <div>
-                        <label class="text-[11px] font-black text-[var(--ter)] uppercase tracking-wider ml-1 mb-1.5 block">本月第幾期</label>
-                        <div class="relative">
-                            <input type="number" id="m-cur" value="1" class="ios-input pr-10 text-center" style="color:var(--orange)">
-                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] font-black text-[var(--ter)]">期</span>
+                        <label class="field-label zh block mb-1.5">本月第幾期</label>
+                        <div class="flex items-baseline gap-2">
+                            <input type="number" id="m-cur" value="1" class="ink-input serif text-[20px] tnum text-center" style="color:var(--accent)">
+                            <span class="text-[12px] zh" style="color:var(--ink-mute)">期</span>
                         </div>
                     </div>
                 </div>
-                <div class="bg-orange-50 rounded-xl px-4 py-3 flex items-start gap-2">
-                    <i class="fa-solid fa-circle-info text-[var(--orange)] text-sm mt-0.5 shrink-0"></i>
-                    <span class="text-[12px] font-bold text-orange-500 leading-relaxed" id="inst-info">請填入期數與第幾期</span>
+                <div class="text-[11px] zh leading-relaxed pt-1" style="color:var(--ink-mute); border-left:1px solid var(--rule); padding-left:12px" id="inst-info">
+                    請填入期數與第幾期
                 </div>
             </div>
         </div>
@@ -303,23 +611,23 @@
 
 <!-- CONFIRM -->
 
-<div id="confirm" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+<div id="confirm" class="hidden fixed inset-0 z-[60] flex items-center justify-center" style="background:rgba(31,30,29,.45); backdrop-filter:blur(8px)">
     <div class="cdlg">
-        <div class="p-5 text-center">
-            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3">
-                <i class="fa-solid fa-trash-can text-[var(--red)] text-lg"></i>
-            </div>
-            <h4 class="text-[17px] font-black mb-1">確定要刪除嗎？</h4>
-            <p class="text-[13px] text-[var(--ter)] leading-relaxed">此動作無法復原。分期項目將移除所有月份紀錄。</p>
+        <div class="px-6 py-7 text-center">
+            <div class="field-label mb-3 zh" style="color:var(--warn)">刪除確認</div>
+            <h4 class="serif text-[18px] zh font-medium mb-2">確定要刪除嗎？</h4>
+            <p class="text-[12px] zh leading-relaxed" style="color:var(--ink-mute)">
+                此動作無法復原。<br>分期項目將移除所有月份紀錄。
+            </p>
         </div>
-        <div class="flex border-t border-black/8">
-            <button onclick="closeConfirm()" class="flex-1 py-3.5 text-[17px] font-medium border-r border-black/8 hover:bg-black/5">取消</button>
-            <button onclick="doDelete()" class="flex-1 py-3.5 text-[17px] font-black text-[var(--red)] hover:bg-red-50">刪除</button>
+        <div class="flex" style="border-top:1px solid var(--rule)">
+            <button onclick="closeConfirm()" class="flex-1 py-3.5 text-[13px] zh" style="border-right:1px solid var(--rule); color:var(--ink-soft); letter-spacing:.06em">取消</button>
+            <button onclick="doDelete()" class="flex-1 py-3.5 text-[13px] zh font-medium" style="color:var(--warn); letter-spacing:.06em">刪除</button>
         </div>
     </div>
 </div>
 
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast zh"></div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -339,24 +647,21 @@ const FB = initializeApp({
 const auth = getAuth(FB);
 const db   = getFirestore(FB);
 
-// ─── State ───────────────────────────────────────────────
 let S = { uid:null, month:'', salaries:{}, customSav:{}, items:[] };
 let pendingDel = null, donutChart = null, trendChart = null, unsub = null;
 
-// ─── Utils ───────────────────────────────────────────────
 const $ = id => document.getElementById(id);
-const fmt  = n  => Math.round(n).toLocaleString('en-US');
+const fmt = n => Math.round(n).toLocaleString('en-US');
 const addM = (ym,n) => { let[y,m]=ym.split('-').map(Number),d=new Date(y,m-1+n,1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; };
-const mDiff= (a,b) => { const da=new Date(a+'-01'),db=new Date(b+'-01'); return (db.getFullYear()-da.getFullYear())*12+(db.getMonth()-da.getMonth()); };
-const days = ym  => { const[y,m]=ym.split('-'); return new Date(y,m,0).getDate(); };
-const mLbl = ym  => { const[y,m]=ym.split('-'); return `${y}年 ${parseInt(m)}月`; };
-function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2500); }
+const mDiff = (a,b) => { const da=new Date(a+'-01'),db=new Date(b+'-01'); return (db.getFullYear()-da.getFullYear())*12+(db.getMonth()-da.getMonth()); };
+const days = ym => { const[y,m]=ym.split('-'); return new Date(y,m,0).getDate(); };
+const mLbl = ym => { const[y,m]=ym.split('-'); return `${y} · ${parseInt(m).toString().padStart(2,'0')}`; };
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2400); }
 
-// ─── Firebase ────────────────────────────────────────────
 async function save() {
     if(!S.uid) return;
     try{ await setDoc(doc(db,'users',S.uid),{salaries:S.salaries,customSav:S.customSav,items:S.items}); }
-    catch(e){ toast('儲存失敗，請檢查網路'); }
+    catch(e){ toast('儲存失敗'); }
 }
 function subscribe() {
     if(unsub) unsub();
@@ -366,10 +671,9 @@ function subscribe() {
     });
 }
 
-// ─── Auth ────────────────────────────────────────────────
 $('login-btn').onclick = async () => {
     try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
-    catch(e){ toast('登入失敗，請再試一次'); }
+    catch(e){ toast('登入失敗'); }
 };
 $('logout-btn').onclick = async () => { if(unsub)unsub(); await signOut(auth); toast('已登出'); };
 
@@ -391,7 +695,6 @@ onAuthStateChanged(auth, u => {
     }
 });
 
-// ─── Month nav ───────────────────────────────────────────
 $('prev-btn').onclick = () => { S.month=addM(S.month,-1); syncMonth(); render(); };
 $('next-btn').onclick = () => { S.month=addM(S.month, 1); syncMonth(); render(); };
 function syncMonth(){ $('month-label').textContent=mLbl(S.month); $('salary').value=S.salaries[S.month]||''; }
@@ -407,7 +710,6 @@ $('savings').addEventListener('change', e => {
 });
 window.resetSavings = () => { delete S.customSav[S.month]; save(); render(); };
 
-// ─── Compute ─────────────────────────────────────────────
 function calcMonth(m) {
     let liv=0, ins=0, list=[];
     S.items.forEach(item => {
@@ -421,7 +723,7 @@ function calcMonth(m) {
             if(p<1||p>item.periods) return;
             const base=Math.floor(item.total/item.periods);
             amt = p===1 ? base+(item.total%item.periods) : base;
-            lbl = `${p}/${item.periods} 期`;
+            lbl = `${p} / ${item.periods} 期`;
         }
         list.push({...item,amt,lbl});
         if(item.cat==='living') liv+=amt;
@@ -430,7 +732,6 @@ function calcMonth(m) {
     return { list, liv:Math.round(liv), ins:Math.round(ins) };
 }
 
-// ─── Render ──────────────────────────────────────────────
 function render() {
     const sal  = Math.round(S.salaries[S.month])||0;
     const isC  = S.customSav[S.month]!==undefined;
@@ -441,68 +742,93 @@ function render() {
     const livR = livB-liv, insR=insB-ins;
     const daily= livR>0 ? Math.round(livR/days(S.month)) : 0;
 
-    // salary sync
     const si=$('salary'); if(document.activeElement!==si) si.value=sal||'';
 
-    // savings
     const svi=$('savings'); if(document.activeElement!==svi) svi.value=sav;
-    $('sav-lbl').textContent = isC ? `自訂 (${sal>0?Math.round(sav/sal*100):0}%)` : '預設 30%';
+    $('sav-lbl').textContent = isC ? `自訂 · ${sal>0?Math.round(sav/sal*100):0}%` : '預設 30%';
     $('reset-sav-btn').classList.toggle('hidden',!isC);
 
-    // overview
-    $('remain-val').textContent = livR>=0 ? `$${fmt(livR)}` : `-$${fmt(Math.abs(livR))}`;
-    $('remain-val').style.color  = livR<0 ? 'var(--red)' : 'var(--main)';
-    $('daily-val').textContent   = `$${fmt(daily)}`;
+    $('remain-val').textContent = livR>=0 ? `$${fmt(livR)}` : `−$${fmt(Math.abs(livR))}`;
+    $('remain-val').style.color = livR<0 ? 'var(--warn)' : 'var(--ink)';
+    $('daily-val').textContent = `$${fmt(daily)}`;
     const sP=sal>0?Math.round(sav/sal*100):30, lP=sal>0?Math.round(liv/sal*100):0, iP=sal>0?Math.round(ins/sal*100):0;
-    $('used-pct').textContent = `${lP+iP}%`;
+    $('used-pct').innerHTML = `${lP+iP}<span class="text-[16px]" style="color:var(--ink-mute)">%</span>`;
     $('sav-pct').textContent=`${sP}%`; $('sav-amt').textContent=`$${fmt(sav)}`;
     $('liv-pct').textContent=`${lP}%`; $('liv-amt').textContent=`$${fmt(liv)}`;
     $('ins-pct').textContent=`${iP}%`; $('ins-amt').textContent=`$${fmt(ins)}`;
     updateDonut([sP,lP,iP,Math.max(0,100-sP-lP-iP)]);
 
-    // living section
     $('liv-budget-lbl').textContent=`預算 $${fmt(livB)}`;
     $('liv-spent').textContent=`$${fmt(liv)}`;
     const lbP=livB>0?Math.min(Math.round(liv/livB*100),100):0;
-    $('liv-bar').style.width=`${lbP}%`; $('liv-bar').style.background=lbP>=100?'var(--red)':'var(--yellow)';
+    $('liv-bar').style.width=`${lbP}%`;
+    const livOver = lbP>=100;
+    $('liv-bar').style.color = livOver ? 'var(--warn)' : 'var(--ink-soft)';
+    $('liv-bar').style.background = livOver ? 'var(--warn)' : 'var(--ink-soft)';
     $('liv-remain-lbl').textContent=livR>=0?`剩餘 $${fmt(livR)}`:`超支 $${fmt(Math.abs(livR))}`;
-    $('liv-remain-lbl').style.color=livR<0?'var(--red)':'#D97706';
+    $('liv-remain-lbl').style.color=livR<0?'var(--warn)':'var(--ink-soft)';
     renderList(list.filter(i=>i.cat==='living'), $('liv-list'), 'living');
 
-    // insurance section
     $('ins-budget-lbl').textContent=`預算 $${fmt(insB)}`;
     $('ins-spent').textContent=`$${fmt(ins)}`;
     const ibP=insB>0?Math.min(Math.round(ins/insB*100),100):0;
-    $('ins-bar').style.width=`${ibP}%`; $('ins-bar').style.background=ibP>=100?'var(--red)':'var(--green)';
+    $('ins-bar').style.width=`${ibP}%`;
+    const insOver = ibP>=100;
+    $('ins-bar').style.color = insOver ? 'var(--warn)' : 'var(--good)';
+    $('ins-bar').style.background = insOver ? 'var(--warn)' : 'var(--good)';
     $('ins-remain-lbl').textContent=insR>=0?`剩餘 $${fmt(insR)}`:`超支 $${fmt(Math.abs(insR))}`;
-    $('ins-remain-lbl').style.color=insR<0?'var(--red)':'#16A34A';
+    $('ins-remain-lbl').style.color=insR<0?'var(--warn)':'var(--good)';
     renderList(list.filter(i=>i.cat==='insurance'), $('ins-list'), 'insurance');
 }
 
 function updateDonut(data){
     const ctx=$('donut').getContext('2d');
     if(donutChart) donutChart.destroy();
-    donutChart=new Chart(ctx,{type:'doughnut',data:{datasets:[{data,backgroundColor:['#FF6B35','#FBBF24','#34C759','rgba(142,142,147,.12)'],borderWidth:0,hoverOffset:4}]},options:{cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:600}}});
+    donutChart=new Chart(ctx,{
+        type:'doughnut',
+        data:{datasets:[{
+            data,
+            backgroundColor:['#C15F3C','#45413C','#6B7F4F','#EEE9DD'],
+            borderWidth:0,
+            hoverOffset:2
+        }]},
+        options:{
+            cutout:'78%',
+            plugins:{legend:{display:false},tooltip:{enabled:false}},
+            animation:{duration:800, easing:'easeOutCubic'}
+        }
+    });
 }
 
 function renderList(items, el, cat){
-    if(!items.length){ el.innerHTML=`<div class="text-center py-5 text-[12px] font-black text-[var(--ter)] opacity-40 tracking-widest">尚無紀錄</div>`; return; }
-    const col=cat==='living'?'#D97706':'#16A34A';
+    if(!items.length){
+        el.innerHTML=`<div class="text-center py-6 text-[11px] zh" style="color:var(--ink-faint); letter-spacing:.2em">── 尚無紀錄 ──</div>`;
+        return;
+    }
     el.innerHTML=items.map(item=>`
-    <div class="li flex justify-between items-center">
+    <div class="hover-row flex justify-between items-center py-3 px-1" style="border-bottom:1px solid var(--rule-soft)">
         <div class="flex-1 min-w-0 pr-3">
-            <div class="text-[14px] font-black truncate">${item.name}</div>
-            <div class="text-[11px] font-bold text-[var(--ter)] mt-0.5">${item.lbl}${item.type==='installment'?` · 總額 $${fmt(item.total)}`:''}</div>
+            <div class="serif text-[15px] truncate zh font-medium">${item.name}</div>
+            <div class="text-[10px] zh mt-0.5" style="color:var(--ink-mute); letter-spacing:.05em">
+                ${item.lbl}${item.type==='installment'?` · 總額 $${fmt(item.total)}`:''}
+            </div>
         </div>
-        <div class="flex items-center gap-1.5 shrink-0">
-            <span class="font-black text-[15px]" style="color:${col}">$${fmt(item.amt)}</span>
-            <button onclick="editItem('${item.id}')" class="w-7 h-7 rounded-full bg-[var(--bg)] flex items-center justify-center"><i class="fa-solid fa-pen text-[9px] text-[var(--ter)]"></i></button>
-            <button onclick="delItem('${item.id}')" class="w-7 h-7 rounded-full bg-red-50 flex items-center justify-center"><i class="fa-solid fa-trash-can text-[9px] text-[var(--red)]"></i></button>
+        <div class="flex items-center gap-2 shrink-0">
+            <span class="serif tnum text-[15px]" style="color:var(--ink)">$${fmt(item.amt)}</span>
+            <button onclick="editItem('${item.id}')" class="icon-btn" title="編輯">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M4 20h4l11-11-4-4L4 16v4z"/><path d="M14 6l4 4"/>
+                </svg>
+            </button>
+            <button onclick="delItem('${item.id}')" class="icon-btn danger" title="刪除">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M4 6h16M9 6V4h6v2M6 6l1 14h10l1-14"/>
+                </svg>
+            </button>
         </div>
     </div>`).join('');
 }
 
-// ─── History ─────────────────────────────────────────────
 function renderHistory(){
     const mSet=new Set();
     Object.keys(S.salaries).forEach(m=>{ if(S.salaries[m]>0) mSet.add(m); });
@@ -513,21 +839,86 @@ function renderHistory(){
     const allM=[...mSet].sort().reverse();
     const t6=allM.slice(0,6).reverse();
 
-    // Trend chart
     const tCtx=$('trend').getContext('2d');
     if(trendChart) trendChart.destroy();
     const getSpend=m=>{ const{liv,ins}=calcMonth(m); return liv+ins; };
-    trendChart=new Chart(tCtx,{data:{
-        labels:t6.map(m=>{ const[,mo]=m.split('-'); return `${parseInt(mo)}月`; }),
-        datasets:[
-            {type:'line',label:'薪資',data:t6.map(m=>S.salaries[m]||0),borderColor:'#FF6B35',backgroundColor:'rgba(255,107,53,.08)',fill:true,tension:.4,pointBackgroundColor:'#FF6B35',pointRadius:5,borderWidth:2.5},
-            {type:'bar', label:'支出',data:t6.map(getSpend),backgroundColor:'rgba(251,191,36,.75)',borderRadius:8,borderSkipped:false}
-        ]
-    },options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{weight:'700',size:11},padding:16,boxWidth:12,boxHeight:12}},tooltip:{callbacks:{label:c=>` $${fmt(c.raw)}`}}},scales:{y:{ticks:{callback:v=>`$${fmt(v)}`,font:{size:10,weight:'700'}},grid:{color:'rgba(0,0,0,.04)'}},x:{ticks:{font:{size:11,weight:'700'}},grid:{display:false}}}}});
+    trendChart=new Chart(tCtx,{
+        data:{
+            labels:t6.map(m=>{ const[,mo]=m.split('-'); return parseInt(mo).toString().padStart(2,'0'); }),
+            datasets:[
+                {
+                    type:'line',
+                    label:'薪資',
+                    data:t6.map(m=>S.salaries[m]||0),
+                    borderColor:'#C15F3C',
+                    backgroundColor:'rgba(193,95,60,.06)',
+                    fill:true,
+                    tension:.35,
+                    pointBackgroundColor:'#FAF7F2',
+                    pointBorderColor:'#C15F3C',
+                    pointBorderWidth:1.5,
+                    pointRadius:4,
+                    pointHoverRadius:6,
+                    borderWidth:1.5
+                },
+                {
+                    type:'bar',
+                    label:'支出',
+                    data:t6.map(getSpend),
+                    backgroundColor:'rgba(69,65,60,.5)',
+                    borderRadius:0,
+                    borderSkipped:false,
+                    barPercentage:0.5
+                }
+            ]
+        },
+        options:{
+            responsive:true,
+            plugins:{
+                legend:{
+                    position:'bottom',
+                    labels:{
+                        font:{family:"'Noto Serif TC', serif", weight:'500', size:11},
+                        padding:14, boxWidth:8, boxHeight:8,
+                        color:'#45413C'
+                    }
+                },
+                tooltip:{
+                    backgroundColor:'#1F1E1D',
+                    titleFont:{family:"'Inter', sans-serif", size:10, weight:'500'},
+                    bodyFont:{family:"'Fraunces', serif", size:13},
+                    padding:10,
+                    cornerRadius:2,
+                    callbacks:{label:c=>` $${fmt(c.raw)}`}
+                }
+            },
+            scales:{
+                y:{
+                    ticks:{
+                        callback:v=>`$${fmt(v)}`,
+                        font:{family:"'Fraunces', serif", size:10},
+                        color:'#8A857C'
+                    },
+                    grid:{color:'rgba(229,223,211,.6)', drawBorder:false},
+                    border:{display:false}
+                },
+                x:{
+                    ticks:{
+                        font:{family:"'Fraunces', serif", size:11},
+                        color:'#8A857C'
+                    },
+                    grid:{display:false},
+                    border:{color:'#E5DFD3'}
+                }
+            }
+        }
+    });
 
-    // List
     const listEl=$('hist-list');
-    if(!allM.length){ listEl.innerHTML='<div class="text-center py-8 text-[var(--ter)] font-bold text-[13px]">尚無歷史資料</div>'; return; }
+    if(!allM.length){
+        listEl.innerHTML='<div class="text-center py-10 zh text-[12px]" style="color:var(--ink-faint); letter-spacing:.2em">── 尚無歷史 ──</div>';
+        return;
+    }
     listEl.innerHTML=allM.map(m=>{
         const sal=S.salaries[m]||0;
         const{liv,ins}=calcMonth(m);
@@ -535,33 +926,44 @@ function renderHistory(){
         const sRate=sal>0?Math.round((sal-total)/sal*100):0;
         const over=sal>0&&total>sal*0.7;
         return `<div class="hcard">
-            <div class="flex justify-between items-center mb-2.5">
-                <div class="font-black text-[16px]">${mLbl(m)}</div>
-                <span class="badge ${over?'bg-red-100 text-red-500':'bg-green-100 text-green-600'}">${over?'⚠ 超預算':`✓ 儲蓄 ${sRate}%`}</span>
+            <div class="flex justify-between items-center mb-3">
+                <div>
+                    <div class="serif text-[17px] tnum zh font-medium">${mLbl(m)}</div>
+                </div>
+                <span class="tag zh" style="${over?'background:rgba(184,81,47,.1); color:var(--warn)':'background:var(--good-bg); color:var(--good)'}">
+                    ${over?'超預算':`儲蓄 ${sRate}%`}
+                </span>
             </div>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="bg-[var(--bg)] rounded-xl p-2.5 text-center"><div class="text-[10px] font-black text-[var(--ter)] mb-0.5">薪資</div><div class="text-[13px] font-black">$${fmt(sal)}</div></div>
-                <div class="bg-yellow-50 rounded-xl p-2.5 text-center"><div class="text-[10px] font-black text-yellow-500 mb-0.5">生活</div><div class="text-[13px] font-black text-yellow-600">$${fmt(liv)}</div></div>
-                <div class="bg-green-50 rounded-xl p-2.5 text-center"><div class="text-[10px] font-black text-green-500 mb-0.5">保險</div><div class="text-[13px] font-black text-green-600">$${fmt(ins)}</div></div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div>
+                    <div class="field-label zh mb-1">薪資</div>
+                    <div class="serif tnum text-[14px]">$${fmt(sal)}</div>
+                </div>
+                <div>
+                    <div class="field-label zh mb-1">生活</div>
+                    <div class="serif tnum text-[14px]" style="color:var(--ink-soft)">$${fmt(liv)}</div>
+                </div>
+                <div>
+                    <div class="field-label zh mb-1">保險</div>
+                    <div class="serif tnum text-[14px]" style="color:var(--good)">$${fmt(ins)}</div>
+                </div>
             </div>
         </div>`;
     }).join('');
 }
 
-// ─── Page switch ─────────────────────────────────────────
 window.goPage = function(p){
     document.querySelectorAll('.nav-tab').forEach(t=>{
-        t.style.color = t.dataset.p===p ? 'var(--orange)' : 'var(--ter)';
+        t.classList.toggle('active', t.dataset.p===p);
     });
     const hp=$('hist-page'), mp=$('main-page');
     if(p==='hist'){ hp.classList.remove('hidden'); mp.style.display='none'; renderHistory(); }
     else { hp.classList.add('hidden'); mp.style.display=''; }
 };
 
-// ─── Modal ───────────────────────────────────────────────
 window.openModal = function(cat){
     $('m-cat').value=cat; $('m-id').value='';
-    $('m-title').textContent=cat==='living'?'新增生活支出':'新增保險項目';
+    $('m-title').textContent=cat==='living'?'新增 — 生活':'新增 — 保險';
     $('m-ok').textContent='新增';
     $('m-name').value=''; $('m-amt').value=''; $('m-periods').value=''; $('m-cur').value='1';
     setType(cat==='insurance'?'installment':'single');
@@ -578,9 +980,9 @@ window.editItem = function(id){
     $('modal').classList.remove('hidden');
     requestAnimationFrame(()=>$('mbox').classList.add('open'));
 };
-window.closeModal = function(){ $('mbox').classList.remove('open'); setTimeout(()=>$('modal').classList.add('hidden'),380); };
-window.bgClick    = function(e){ if(e.target===$('modal')) closeModal(); };
-window.setType    = function(t){
+window.closeModal = function(){ $('mbox').classList.remove('open'); setTimeout(()=>$('modal').classList.add('hidden'),420); };
+window.bgClick = function(e){ if(e.target===$('modal')) closeModal(); };
+window.setType = function(t){
     $('m-type').value=t;
     $('seg-s').classList.toggle('on',t==='single');
     $('seg-i').classList.toggle('on',t==='installment');
@@ -600,26 +1002,25 @@ $('m-cur').addEventListener('input',updateInfo);
 window.submitModal = function(){
     const editId=$('m-id').value, cat=$('m-cat').value, name=$('m-name').value.trim();
     const type=$('m-type').value, total=Math.round(Number($('m-amt').value));
-    if(!name||!total||total<=0){ toast('⚠ 請填寫完整資料'); return; }
+    if(!name||!total||total<=0){ toast('請填寫完整資料'); return; }
     let periods=1, startM=S.month;
     if(type==='installment'){
         periods=Math.round(Number($('m-periods').value));
         const cur=Math.round(Number($('m-cur').value));
-        if(!periods||periods<2||!cur||cur<1||cur>periods){ toast('⚠ 分期數據有誤'); return; }
+        if(!periods||periods<2||!cur||cur<1||cur>periods){ toast('分期數據有誤'); return; }
         startM=addM(S.month,-(cur-1));
     }
     const d={cat,name,type,total,periods,startM};
     if(editId){ const idx=S.items.findIndex(i=>i.id===editId); if(idx!==-1){ d.id=editId; S.items[idx]=d; } }
     else { d.id=Date.now().toString(); S.items.push(d); }
     save(); render(); closeModal();
-    toast(editId?'✓ 已更新紀錄':'✓ 已新增紀錄');
+    toast(editId?'已更新':'已新增');
 };
 
-// ─── Delete ──────────────────────────────────────────────
-window.delItem     = id => { pendingDel=id; $('confirm').classList.remove('hidden'); };
-window.closeConfirm= () => { $('confirm').classList.add('hidden'); pendingDel=null; };
-window.doDelete    = () => {
-    if(pendingDel){ S.items=S.items.filter(i=>i.id!==pendingDel); save(); render(); closeConfirm(); toast('✓ 已刪除紀錄'); }
+window.delItem = id => { pendingDel=id; $('confirm').classList.remove('hidden'); };
+window.closeConfirm = () => { $('confirm').classList.add('hidden'); pendingDel=null; };
+window.doDelete = () => {
+    if(pendingDel){ S.items=S.items.filter(i=>i.id!==pendingDel); save(); render(); closeConfirm(); toast('已刪除'); }
 };
 </script>
 
