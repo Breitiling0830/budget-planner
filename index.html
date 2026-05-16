@@ -4,213 +4,280 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Budget Planner</title>
+<title>Budget-Planner</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
-    --bg: #F2F2F7;
-    --card: #FFFFFF;
-    --label: #1D1D1F;
-    --label-2: #3C3C43;
-    --label-3: #8E8E93;
-    --label-4: #C7C7CC;
-    --sep: rgba(60, 60, 67, 0.08);
-    --sep-strong: rgba(60, 60, 67, 0.18);
-    --fill: rgba(120, 120, 128, 0.08);
-    --fill-2: rgba(120, 120, 128, 0.12);
-    --accent: #007AFF;
-    --accent-soft: rgba(0, 122, 255, 0.12);
-    --orange: #FF9500;
-    --orange-soft: rgba(255, 149, 0, 0.12);
-    --green: #34C759;
-    --green-soft: rgba(52, 199, 89, 0.12);
-    --red: #FF3B30;
-    --red-soft: rgba(255, 59, 48, 0.12);
-    --sys: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'PingFang TC', 'Helvetica Neue', system-ui, sans-serif;
+    --bg: #F5F1EB;
+    --paper: #FAF7F2;
+    --ink: #1F1E1D;
+    --ink-soft: #45413C;
+    --ink-mute: #8A857C;
+    --ink-faint: #C9C2B6;
+    --rule: #E5DFD3;
+    --rule-soft: #EEE9DD;
+    --accent: #C15F3C;
+    --accent-soft: #E8C7B5;
+    --accent-bg: #F0E1D5;
+    --good: #6B7F4F;
+    --good-bg: #E8E9D9;
+    --warn: #B8512F;
+    --sys: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'PingFang TC', 'Helvetica Neue', system-ui, sans-serif;
 }
-
-- { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
-  background: var(–bg);
-  color: var(–label);
-  font-family: var(–sys);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-  letter-spacing: -0.01em;
-  }
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-  input[type=number] { -moz-appearance: textfield; }
-
-.tnum { font-variant-numeric: tabular-nums; }
-
-.card {
-background: var(–card);
-border-radius: 16px;
-overflow: hidden;
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sys);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
 }
-.card-pad { padding: 16px; }
-.card-pad-lg { padding: 20px; }
-
-.list-row {
-display: flex;
-align-items: center;
-padding: 14px 16px;
-background: var(–card);
-transition: background-color .15s;
+.serif {
+    font-family: var(--sys);
+    letter-spacing: -0.015em;
 }
-.list-row + .list-row { border-top: 0.5px solid var(–sep); }
-.list-row:active { background: var(–fill); }
-
-.section-header {
-font-size: 13px;
-font-weight: 400;
-color: var(–label-3);
-padding: 0 16px;
-margin-bottom: 8px;
-letter-spacing: -0.08px;
+.serif-display {
+    font-family: var(--sys);
+    letter-spacing: -0.03em;
+    font-weight: 600;
 }
+.zh { font-family: var(--sys); }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
 
-.input-clean {
+.paper {
+background: var(–paper);
+border: 1px solid var(–rule);
+border-radius: 4px;
+}
+.rule { border-color: var(–rule); }
+.ink-input {
 background: transparent;
 border: none;
+border-bottom: 1px solid var(–rule);
 outline: none;
+padding: 10px 0;
 font-family: var(–sys);
-color: var(–label);
+transition: border-color .25s;
 width: 100%;
 }
-.input-clean::placeholder { color: var(–label-4); }
-
-.btn-pill {
-background: var(–fill);
-color: var(–label);
-border: none;
-border-radius: 980px;
-padding: 7px 14px;
-font-size: 14px;
+.ink-input:focus { border-bottom-color: var(–accent); }
+.field-label {
+font-size: 10px;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(–ink-mute);
 font-weight: 500;
+}
+.btn-ghost {
+background: transparent;
+border: 1px solid var(–rule);
+color: var(–ink-soft);
+padding: 8px 14px;
+border-radius: 2px;
+font-size: 12px;
+letter-spacing: 0.04em;
+transition: all .2s;
 cursor: pointer;
-transition: all .15s;
+}
+.btn-ghost:hover { border-color: var(–ink-soft); color: var(–ink); }
+.btn-accent {
+background: var(–ink);
+color: var(–paper);
+border: 1px solid var(–ink);
+padding: 8px 16px;
+border-radius: 2px;
+font-size: 12px;
+letter-spacing: 0.06em;
+cursor: pointer;
+transition: all .2s;
+}
+.btn-accent:hover { background: var(–accent); border-color: var(–accent); }
+.add-btn {
+width: 28px; height: 28px;
+border: 1px solid var(–rule);
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+color: var(–ink-soft);
+font-size: 18px; line-height: 0;
 font-family: var(–sys);
-}
-.btn-pill:active { background: var(–fill-2); transform: scale(.96); }
-
-.btn-circle {
-width: 30px; height: 30px;
-background: var(–fill);
-border: none;
-border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-color: var(–label);
+font-weight: 300;
+transition: all .2s;
 cursor: pointer;
-transition: all .15s;
+background: transparent;
 }
-.btn-circle:active { background: var(–fill-2); transform: scale(.94); }
-
-.btn-add {
-width: 30px; height: 30px;
-background: var(–accent);
-border: none;
+.add-btn:hover { border-color: var(–accent); color: var(–accent); }
+.icon-btn {
+width: 26px; height: 26px;
+display: inline-flex; align-items: center; justify-content: center;
+color: var(–ink-mute);
+transition: color .2s;
+background: none; border: none; cursor: pointer;
 border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-color: white;
-cursor: pointer;
-transition: all .15s;
-box-shadow: 0 1px 2px rgba(0, 122, 255, 0.25);
 }
-.btn-add:active { transform: scale(.92); }
+.icon-btn:hover { color: var(–ink); }
+.icon-btn.danger:hover { color: var(–warn); }
+
+.divider-thin { border-bottom: 1px solid var(–rule-soft); }
+.divider-thick { border-bottom: 1px solid var(–rule); }
 
 .seg {
 display: flex;
-background: var(–fill);
-border-radius: 9px;
-padding: 2px;
-position: relative;
+background: rgba(31, 30, 29, 0.06);
+border-radius: 10px;
+padding: 3px;
 }
 .seg-btn {
 flex: 1;
 text-align: center;
-padding: 7px 0;
+padding: 8px 0;
 font-size: 13px;
-color: var(–label);
+color: var(–ink-soft);
 cursor: pointer;
-transition: all .25s cubic-bezier(.4,0,.2,1);
+transition: all .2s;
 border-radius: 7px;
 font-weight: 500;
-position: relative;
-z-index: 1;
 }
 .seg-btn.on {
-background: var(–card);
-box-shadow: 0 3px 8px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.06);
-font-weight: 600;
+background: #FFFFFF;
+color: var(–ink);
+box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 1px rgba(0,0,0,.04);
 }
 
-.progress-track {
-height: 8px;
-background: var(–fill);
-border-radius: 4px;
-overflow: hidden;
+.pt {
+height: 1px;
+background: var(–rule);
+position: relative;
+overflow: visible;
 }
-.progress-fill {
-height: 100%;
-border-radius: 4px;
+.pf {
+height: 1px;
 transition: width .8s cubic-bezier(.22,1,.36,1);
+position: relative;
+}
+.pf::after {
+content: ‘’;
+position: absolute;
+right: -3px; top: -2px;
+width: 5px; height: 5px;
+background: currentColor;
+border-radius: 50%;
+}
+
+.tag {
+display: inline-flex;
+align-items: center;
+padding: 2px 9px;
+border-radius: 2px;
+font-size: 10px;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+font-weight: 500;
+}
+
+.nav-tab {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 12px 0 14px;
+gap: 4px;
+cursor: pointer;
+transition: color .2s;
+color: var(–ink-mute);
+position: relative;
+}
+.nav-tab.active { color: var(–ink); }
+.nav-tab.active::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 50%;
+transform: translateX(-50%);
+width: 20px; height: 1px;
+background: var(–accent);
 }
 
 .modal-bg {
 position: fixed; inset: 0;
-background: rgba(0, 0, 0, 0.4);
+background-color: rgba(31, 30, 29, 0.72);
 z-index: 50;
 display: flex;
-align-items: flex-end;
+align-items: center;
 justify-content: center;
-opacity: 0;
-transition: opacity .35s;
+padding: 20px;
 isolation: isolate;
 }
-.modal-bg.show { opacity: 1; }
-
-@media(min-width: 640px) {
-.modal-bg { align-items: center; padding: 20px; }
-}
-
 .modal-box {
-background: var(–bg);
+background: #F5F1EB;
 width: 100%;
-max-width: 480px;
-border-radius: 14px 14px 0 0;
-box-shadow: 0 -8px 30px rgba(0,0,0,.1);
-transform: translateY(100%);
-transition: transform .4s cubic-bezier(.22,1,.36,1);
-max-height: 92vh;
+max-width: 420px;
+border-radius: 18px;
+padding: 0;
+box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4), 0 12px 30px rgba(0, 0, 0, 0.2);
+transform: translateY(20px) scale(.96);
+opacity: 0;
+transition: transform .4s cubic-bezier(.22,1,.36,1), opacity .3s;
+max-height: calc(100vh - 40px);
 overflow-y: auto;
 position: relative;
 z-index: 1;
 }
-@media(min-width: 640px) {
-.modal-box { border-radius: 14px; }
+.modal-box.open {
+transform: translateY(0) scale(1);
+opacity: 1;
 }
-.modal-box.open { transform: translateY(0); }
-
 .modal-header {
 display: flex;
 justify-content: space-between;
 align-items: center;
-padding: 14px 16px;
-background: var(–bg);
+padding: 16px 20px;
+border-bottom: 1px solid var(–rule);
+background: #F5F1EB;
 position: sticky;
 top: 0;
-z-index: 5;
+z-index: 2;
+border-radius: 18px 18px 0 0;
 }
-
-.modal-grabber {
-width: 36px; height: 5px;
-background: var(–label-4);
-border-radius: 3px;
-margin: 6px auto 0;
+.modal-body {
+padding: 20px 20px 28px;
+background: #F5F1EB;
+}
+.modal-btn-text {
+font-size: 14px;
+letter-spacing: 0.02em;
+padding: 6px 4px;
+background: none;
+border: none;
+cursor: pointer;
+font-family: var(–sys);
+}
+.field {
+background: #FFFFFF;
+border: 1px solid var(–rule);
+border-radius: 12px;
+padding: 12px 14px;
+transition: border-color .2s, box-shadow .2s;
+}
+.field:focus-within {
+border-color: var(–accent);
+box-shadow: 0 0 0 3px rgba(193, 95, 60, 0.12);
+}
+.field-input {
+background: transparent;
+border: none;
+outline: none;
+width: 100%;
+font-family: var(–sys);
+color: var(–ink);
+padding: 0;
+}
+.field-input::placeholder { color: var(–ink-faint); }
+.modal-box.open {
+transform: translateY(0) scale(1);
+opacity: 1;
 }
 
 #auth {
@@ -224,21 +291,20 @@ justify-content: center;
 .gbtn {
 display: inline-flex;
 align-items: center;
-gap: 10px;
-background: var(–label);
-color: var(–card);
-border-radius: 14px;
+gap: 12px;
+background: var(–ink);
+color: var(–paper);
+border-radius: 2px;
 padding: 14px 24px;
-font-size: 16px;
-font-weight: 500;
+font-size: 14px;
+letter-spacing: 0.04em;
 cursor: pointer;
 border: none;
-transition: all .15s;
-font-family: var(–sys);
+transition: all .2s;
 }
-.gbtn:active { transform: scale(.97); }
+.gbtn:hover { background: var(–accent); }
 
-.ring-wrap { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+.ring-wrap { position: relative; width: 132px; height: 132px; flex-shrink: 0; }
 .ring-center {
 position: absolute; inset: 0;
 display: flex; flex-direction: column;
@@ -248,87 +314,65 @@ text-align: center;
 
 .toast {
 position: fixed;
-top: 70px; left: 50%;
+top: 80px; left: 50%;
 transform: translateX(-50%) translateY(-12px);
-background: rgba(0, 0, 0, 0.85);
-backdrop-filter: blur(20px);
-color: white;
-padding: 12px 20px;
-border-radius: 14px;
-font-size: 14px;
-font-weight: 500;
+background: var(–ink);
+color: var(–paper);
+padding: 10px 20px;
+border-radius: 2px;
+font-size: 13px;
+letter-spacing: 0.04em;
 z-index: 200;
 opacity: 0;
 transition: all .35s cubic-bezier(.22,1,.36,1);
 pointer-events: none;
-box-shadow: 0 8px 30px rgba(0,0,0,.15);
 }
-.toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.on {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
 
 .cdlg {
-background: rgba(242, 242, 247, 0.94);
-backdrop-filter: blur(40px) saturate(180%);
--webkit-backdrop-filter: blur(40px) saturate(180%);
-border-radius: 14px;
-width: 270px;
+background: #F5F1EB;
+border-radius: 16px;
+width: 320px;
+box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4), 0 12px 30px rgba(0, 0, 0, 0.2);
 overflow: hidden;
 }
-.cdlg-btn {
-padding: 11px;
-text-align: center;
-font-size: 17px;
-font-weight: 400;
-cursor: pointer;
-transition: background .15s;
-color: var(–accent);
-background: none;
-border: none;
-font-family: var(–sys);
-}
-.cdlg-btn:active { background: var(–fill); }
-.cdlg-btn.danger { color: var(–red); font-weight: 600; }
 
-.tab-bar {
-background: rgba(242, 242, 247, 0.82);
-backdrop-filter: blur(40px) saturate(180%);
--webkit-backdrop-filter: blur(40px) saturate(180%);
-border-top: 0.5px solid var(–sep-strong);
-}
-.nav-tab {
-flex: 1;
-display: flex;
-flex-direction: column;
-align-items: center;
-padding: 8px 0 6px;
-gap: 3px;
-cursor: pointer;
-color: var(–label-3);
-transition: color .15s;
+.hcard {
+border-left: 1px solid var(–rule);
+padding-left: 16px;
 position: relative;
-background: none;
-border: none;
-font-family: var(–sys);
 }
-.nav-tab.active { color: var(–accent); }
-
-.top-bar {
-background: rgba(242, 242, 247, 0.82);
-backdrop-filter: blur(40px) saturate(180%);
--webkit-backdrop-filter: blur(40px) saturate(180%);
+.hcard::before {
+content: ‘’;
+position: absolute;
+left: -3px; top: 8px;
+width: 5px; height: 5px;
+background: var(–accent);
+border-radius: 50%;
 }
 
 ::-webkit-scrollbar { width: 0; }
 
+/* tabular figures for numbers */
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* subtle pull animation */
 @keyframes rise {
-from { opacity: 0; transform: translateY(6px); }
+from { opacity: 0; transform: translateY(8px); }
 to   { opacity: 1; transform: translateY(0); }
 }
-.rise { animation: rise .45s cubic-bezier(.22,1,.36,1) both; }
-.rise-1 { animation-delay: .04s; }
-.rise-2 { animation-delay: .10s; }
-.rise-3 { animation-delay: .16s; }
-.rise-4 { animation-delay: .22s; }
-.rise-5 { animation-delay: .28s; }
+.rise { animation: rise .5s cubic-bezier(.22,1,.36,1) both; }
+.rise-1 { animation-delay: .05s; }
+.rise-2 { animation-delay: .12s; }
+.rise-3 { animation-delay: .19s; }
+.rise-4 { animation-delay: .26s; }
+.rise-5 { animation-delay: .33s; }
+
+.hover-row { transition: background-color .15s; border-radius: 2px; }
+.hover-row:hover { background-color: rgba(193, 95, 60, 0.04); }
 </style>
 
 </head>
@@ -338,27 +382,33 @@ to   { opacity: 1; transform: translateY(0); }
 
 <div id="auth">
     <div class="text-center px-8 max-w-sm rise">
-        <div class="mb-10 flex justify-center">
-            <div class="w-20 h-20 rounded-[22px] flex items-center justify-center" style="background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%); box-shadow: 0 10px 30px rgba(0,122,255,.25)">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-            </div>
+        <div class="mb-12 flex justify-center">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="var(--accent)" stroke-width="1.2">
+                <circle cx="22" cy="22" r="18"/>
+                <path d="M 13 22 L 22 13 L 31 22 L 22 31 Z" stroke-linejoin="round"/>
+                <circle cx="22" cy="22" r="3" fill="var(--accent)" stroke="none"/>
+            </svg>
         </div>
-        <h1 class="text-[34px] font-bold mb-3" style="letter-spacing:-0.02em">Budget Planner</h1>
-        <p class="text-[17px] mb-12 leading-snug" style="color:var(--label-2)">
-            掌握你的 631 預算<br>儲蓄、生活與保障
+        <div class="field-label mb-3">Six · Three · One</div>
+        <h1 class="serif-display text-[40px] mb-4 zh font-normal" style="color:var(--ink); line-height:1.15">
+            預算的<em style="color:var(--accent); font-style:italic">秩序</em>
+        </h1>
+        <p class="zh text-[14px] mb-12 leading-relaxed" style="color:var(--ink-soft)">
+            把每一塊收入，分給該去的地方。<br>
+            生活、儲蓄、保險——各得其所。
         </p>
         <button class="gbtn" id="login-btn">
-            <svg width="18" height="18" viewBox="0 0 48 48">
+            <svg width="16" height="16" viewBox="0 0 48 48">
                 <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
                 <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
                 <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
                 <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
             </svg>
-            <span>以 Google 帳號繼續</span>
+            <span class="zh">以 Google 繼續</span>
         </button>
-        <p class="text-[12px] mt-6" style="color:var(--label-3)">資料儲存於 Firebase</p>
+        <p class="text-[11px] mt-8" style="color:var(--ink-mute); letter-spacing:.1em">
+            SECURED BY FIREBASE
+        </p>
     </div>
 </div>
 
@@ -367,229 +417,193 @@ to   { opacity: 1; transform: translateY(0); }
 <div id="app" class="hidden">
 
 ```
-<!-- Top bar -->
-<div class="sticky top-0 z-30 top-bar">
-    <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-            </div>
-            <span class="font-semibold text-[17px]" style="letter-spacing:-0.02em">Budget Planner</span>
+<!-- Topbar -->
+<div class="sticky top-0 z-30" style="background: rgba(245, 241, 235, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule);">
+    <div class="max-w-md mx-auto px-5 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2.5">
+            <svg width="20" height="20" viewBox="0 0 44 44" fill="none" stroke="var(--accent)" stroke-width="1.5">
+                <circle cx="22" cy="22" r="18"/>
+                <circle cx="22" cy="22" r="3" fill="var(--accent)" stroke="none"/>
+            </svg>
+            <span class="font-semibold text-[15px] tracking-tight" style="letter-spacing:-0.02em">Budget Planner</span>
         </div>
-        <div class="flex items-center gap-2">
-            <img id="avatar" src="" class="w-8 h-8 rounded-full hidden"/>
-            <button id="logout-btn" class="hidden btn-pill text-[13px]" style="padding:5px 12px">登出</button>
+        <div class="flex items-center gap-3">
+            <img id="avatar" src="" class="w-7 h-7 rounded-full hidden" style="border:1px solid var(--rule)"/>
+            <button id="logout-btn" class="hidden text-[11px]" style="color:var(--ink-mute); letter-spacing:.1em">登出</button>
         </div>
     </div>
 </div>
 
 <!-- Main content -->
-<div class="max-w-md mx-auto px-4 pb-28 pt-3 space-y-6" id="main-page">
+<div class="max-w-md mx-auto px-5 pb-28 pt-6 space-y-8" id="main-page">
 
-    <!-- Large title + month nav -->
-    <div class="px-1 pt-3 rise rise-1">
-        <div class="flex items-center justify-between mb-1">
-            <h1 class="text-[34px] font-bold tnum" style="letter-spacing:-0.025em" id="month-label">載入中</h1>
-            <div class="flex items-center gap-2">
-                <button id="prev-btn" class="btn-circle">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
-                </button>
-                <button id="next-btn" class="btn-circle">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-                </button>
+    <!-- Month + Salary -->
+    <div class="rise rise-1">
+        <div class="flex justify-between items-center mb-6">
+            <button id="prev-btn" class="icon-btn" style="width:32px; height:32px">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 6l-6 6 6 6"/></svg>
+            </button>
+            <div class="text-center">
+                <div class="field-label mb-1">月度規劃</div>
+                <div class="serif text-[22px] zh font-medium" id="month-label">載入中</div>
+            </div>
+            <button id="next-btn" class="icon-btn" style="width:32px; height:32px">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+        </div>
+        <div>
+            <div class="field-label mb-2 zh">本月收入</div>
+            <div class="relative flex items-baseline gap-2">
+                <span class="serif text-[28px] font-normal" style="color:var(--ink-mute)">$</span>
+                <input type="number" id="salary" placeholder="0" class="ink-input serif text-[36px] font-normal tnum">
             </div>
         </div>
-        <div class="text-[15px]" style="color:var(--label-3)">月度預算規劃</div>
     </div>
 
-    <!-- Salary card -->
+    <!-- Overview -->
     <div class="rise rise-2">
-        <div class="section-header">本月收入</div>
-        <div class="card card-pad-lg">
-            <div class="flex items-baseline gap-2">
-                <span class="text-[28px] font-normal tnum" style="color:var(--label-3)">$</span>
-                <input type="number" id="salary" placeholder="0" class="input-clean tnum" style="font-size:38px; font-weight:600; letter-spacing:-0.025em">
-            </div>
-        </div>
-    </div>
-
-    <!-- Overview card -->
-    <div class="rise rise-3">
-        <div class="section-header">總覽</div>
-        <div class="card card-pad-lg">
-            <div class="flex items-center gap-4 mb-5">
-                <div class="ring-wrap">
-                    <canvas id="donut" width="140" height="140"></canvas>
-                    <div class="ring-center">
-                        <div class="text-[11px] font-medium uppercase tracking-wider" style="color:var(--label-3)">已使用</div>
-                        <div class="font-bold tnum mt-0.5" style="font-size:30px; letter-spacing:-0.02em" id="used-pct">0%</div>
-                    </div>
+        <div class="flex items-center gap-5 mb-7">
+            <div class="ring-wrap">
+                <canvas id="donut" width="132" height="132"></canvas>
+                <div class="ring-center">
+                    <div class="field-label">已使用</div>
+                    <div class="serif text-[26px] font-normal tnum mt-0.5" id="used-pct">0<span class="text-[16px]" style="color:var(--ink-mute)">%</span></div>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <div class="text-[13px] mb-1" style="color:var(--label-3)">可自由支配</div>
-                    <div class="font-bold tnum leading-none mb-3" style="font-size:32px; letter-spacing:-0.025em" id="remain-val">$0</div>
-                    <div class="flex items-baseline justify-between pt-3" style="border-top:.5px solid var(--sep)">
-                        <span class="text-[13px]" style="color:var(--label-3)">每日建議</span>
-                        <span class="text-[17px] font-semibold tnum" id="daily-val" style="color:var(--accent)">$0</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="field-label mb-1.5 zh">可自由支配</div>
+                <div class="serif text-[34px] font-normal tnum tracking-tight leading-none" id="remain-val">$0</div>
+                <div class="mt-4 pt-3 divider-thin">
+                    <div class="flex justify-between items-baseline">
+                        <span class="zh text-[12px]" style="color:var(--ink-mute)">每日建議</span>
+                        <span class="serif text-[16px] tnum" id="daily-val" style="color:var(--accent)">$0</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-6 h-6 rounded-md flex items-center justify-center" style="background:var(--accent-soft)">
-                            <div class="w-2 h-2 rounded-sm" style="background:var(--accent)"></div>
-                        </div>
-                        <span class="text-[15px] font-medium">儲蓄</span>
-                        <span class="text-[13px] tnum" style="color:var(--label-3)" id="sav-pct">30%</span>
-                    </div>
-                    <span class="text-[15px] font-semibold tnum" id="sav-amt">$0</span>
+        <!-- Allocation breakdown -->
+        <div class="space-y-3">
+            <div class="flex items-center justify-between text-[13px]">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--accent)"></div>
+                    <span class="zh" style="color:var(--ink-soft)">儲蓄</span>
+                    <span class="field-label tnum" id="sav-pct">30%</span>
                 </div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-6 h-6 rounded-md flex items-center justify-center" style="background:var(--orange-soft)">
-                            <div class="w-2 h-2 rounded-sm" style="background:var(--orange)"></div>
-                        </div>
-                        <span class="text-[15px] font-medium">生活</span>
-                        <span class="text-[13px] tnum" style="color:var(--label-3)" id="liv-pct">0%</span>
-                    </div>
-                    <span class="text-[15px] font-semibold tnum" id="liv-amt">$0</span>
+                <span class="serif tnum" id="sav-amt">$0</span>
+            </div>
+            <div class="flex items-center justify-between text-[13px]">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--ink-soft)"></div>
+                    <span class="zh" style="color:var(--ink-soft)">生活</span>
+                    <span class="field-label tnum" id="liv-pct">0%</span>
                 </div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-6 h-6 rounded-md flex items-center justify-center" style="background:var(--green-soft)">
-                            <div class="w-2 h-2 rounded-sm" style="background:var(--green)"></div>
-                        </div>
-                        <span class="text-[15px] font-medium">保險</span>
-                        <span class="text-[13px] tnum" style="color:var(--label-3)" id="ins-pct">0%</span>
-                    </div>
-                    <span class="text-[15px] font-semibold tnum" id="ins-amt">$0</span>
+                <span class="serif tnum" id="liv-amt">$0</span>
+            </div>
+            <div class="flex items-center justify-between text-[13px]">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full" style="background:var(--good)"></div>
+                    <span class="zh" style="color:var(--ink-soft)">保險</span>
+                    <span class="field-label tnum" id="ins-pct">0%</span>
                 </div>
+                <span class="serif tnum" id="ins-amt">$0</span>
             </div>
         </div>
     </div>
 
     <!-- Savings -->
-    <div class="rise rise-3">
-        <div class="section-header">儲蓄計畫</div>
-        <div class="card">
-            <div class="list-row" style="justify-content:space-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-[10px] flex items-center justify-center" style="background:var(--accent-soft)">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="text-[16px] font-medium">每月留下</div>
-                        <div class="text-[12px]" style="color:var(--label-3)" id="sav-lbl">預設 30%</div>
-                    </div>
-                </div>
-                <div class="flex items-baseline gap-1">
-                    <span class="text-[15px]" style="color:var(--label-3)">$</span>
-                    <input type="number" id="savings" class="input-clean tnum text-right" style="font-size:20px; font-weight:600; width:108px" value="0">
-                </div>
+    <div class="rise rise-3 pt-6 divider-thick">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <div class="field-label mb-1 zh">儲蓄</div>
+                <div class="serif text-[18px] zh font-medium">每月留下的</div>
             </div>
-            <div id="reset-sav-btn" class="hidden" style="border-top:0.5px solid var(--sep)">
-                <button onclick="resetSavings()" class="w-full py-3 text-[15px]" style="color:var(--accent); background:none; border:none; font-family:var(--sys); cursor:pointer">
-                    重置為預設 30%
-                </button>
+            <div class="text-right">
+                <span class="serif text-[14px]" style="color:var(--ink-mute)">$</span>
+                <input type="number" id="savings" class="bg-transparent serif text-[22px] font-normal tnum text-right outline-none w-28" value="0" style="border-bottom:1px solid var(--rule); padding-bottom:2px">
             </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="text-[11px] zh" style="color:var(--ink-mute)" id="sav-lbl">預設 30%</span>
+            <button id="reset-sav-btn" class="hidden text-[11px] zh" style="color:var(--accent); letter-spacing:.05em" onclick="resetSavings()">
+                ← 重置為 30%
+            </button>
         </div>
     </div>
 
     <!-- Living -->
-    <div class="rise rise-4">
-        <div class="flex items-end justify-between px-1 mb-2">
+    <div class="rise rise-4 pt-6 divider-thick">
+        <div class="flex justify-between items-start mb-5">
             <div>
-                <div class="text-[13px]" style="color:var(--label-3)">生活支出</div>
-                <div class="text-[12px]" style="color:var(--label-3)" id="liv-budget-lbl">預算 $0</div>
+                <div class="field-label mb-1 zh">生活</div>
+                <div class="serif text-[18px] zh font-medium">日常支出</div>
+                <div class="text-[11px] zh mt-1" style="color:var(--ink-mute)" id="liv-budget-lbl">預算 $0</div>
             </div>
-            <button onclick="openModal('living')" class="btn-add">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            </button>
+            <button class="add-btn" onclick="openModal('living')">+</button>
         </div>
-        <div class="card card-pad-lg mb-2">
-            <div class="flex justify-between items-baseline mb-3">
-                <div>
-                    <div class="text-[12px]" style="color:var(--label-3)">已支出</div>
-                    <div class="text-[22px] font-bold tnum" id="liv-spent" style="letter-spacing:-0.02em">$0</div>
-                </div>
-                <div class="text-right">
-                    <div class="text-[12px]" style="color:var(--label-3)">剩餘</div>
-                    <div class="text-[17px] font-semibold tnum" id="liv-remain-lbl" style="color:var(--orange)">$0</div>
-                </div>
-            </div>
-            <div class="progress-track">
-                <div id="liv-bar" class="progress-fill" style="width:0%; background:var(--orange)"></div>
-            </div>
+        <div class="flex justify-between items-baseline mb-2">
+            <span class="text-[12px] zh" style="color:var(--ink-mute)">
+                已支出 <span class="serif tnum" id="liv-spent" style="color:var(--ink)">$0</span>
+            </span>
+            <span class="text-[12px] zh tnum" id="liv-remain-lbl" style="color:var(--ink-soft)">剩餘 $0</span>
         </div>
-        <div class="card" id="liv-list"></div>
+        <div class="pt mb-5">
+            <div id="liv-bar" class="pf" style="width:0%; color:var(--ink-soft); background:var(--ink-soft)"></div>
+        </div>
+        <div id="liv-list" class="space-y-0"></div>
     </div>
 
     <!-- Insurance -->
-    <div class="rise rise-5">
-        <div class="flex items-end justify-between px-1 mb-2">
+    <div class="rise rise-5 pt-6 divider-thick">
+        <div class="flex justify-between items-start mb-5">
             <div>
-                <div class="text-[13px]" style="color:var(--label-3)">保險支出</div>
-                <div class="text-[12px]" style="color:var(--label-3)" id="ins-budget-lbl">預算 $0</div>
+                <div class="field-label mb-1 zh">保險</div>
+                <div class="serif text-[18px] zh font-medium">保障規劃</div>
+                <div class="text-[11px] zh mt-1" style="color:var(--ink-mute)" id="ins-budget-lbl">預算 $0</div>
             </div>
-            <button onclick="openModal('insurance')" class="btn-add">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            </button>
+            <button class="add-btn" onclick="openModal('insurance')">+</button>
         </div>
-        <div class="card card-pad-lg mb-2">
-            <div class="flex justify-between items-baseline mb-3">
-                <div>
-                    <div class="text-[12px]" style="color:var(--label-3)">已支出</div>
-                    <div class="text-[22px] font-bold tnum" id="ins-spent" style="letter-spacing:-0.02em">$0</div>
-                </div>
-                <div class="text-right">
-                    <div class="text-[12px]" style="color:var(--label-3)">剩餘</div>
-                    <div class="text-[17px] font-semibold tnum" id="ins-remain-lbl" style="color:var(--green)">$0</div>
-                </div>
-            </div>
-            <div class="progress-track">
-                <div id="ins-bar" class="progress-fill" style="width:0%; background:var(--green)"></div>
-            </div>
+        <div class="flex justify-between items-baseline mb-2">
+            <span class="text-[12px] zh" style="color:var(--ink-mute)">
+                已支出 <span class="serif tnum" id="ins-spent" style="color:var(--ink)">$0</span>
+            </span>
+            <span class="text-[12px] zh tnum" id="ins-remain-lbl" style="color:var(--good)">剩餘 $0</span>
         </div>
-        <div class="card" id="ins-list"></div>
+        <div class="pt mb-5">
+            <div id="ins-bar" class="pf" style="width:0%; color:var(--good); background:var(--good)"></div>
+        </div>
+        <div id="ins-list" class="space-y-0"></div>
     </div>
 </div>
 
 <!-- History page -->
-<div id="hist-page" class="hidden fixed z-20 overflow-y-auto pb-28 pt-3" style="top:57px; inset:0; background:var(--bg)">
-    <div class="max-w-md mx-auto px-4 space-y-6">
-        <div class="px-1 pt-3">
-            <h1 class="text-[34px] font-bold" style="letter-spacing:-0.025em">歷史總覽</h1>
-            <div class="text-[15px] mt-1" style="color:var(--label-3)">過往六個月的收支變化</div>
-        </div>
+<div id="hist-page" class="hidden fixed z-20 overflow-y-auto pb-28 pt-6" style="top:57px; inset:0; background:var(--bg)">
+    <div class="max-w-md mx-auto px-5 space-y-8">
         <div>
-            <div class="section-header">趨勢</div>
-            <div class="card card-pad-lg">
-                <canvas id="trend" height="180"></canvas>
-            </div>
+            <div class="field-label mb-2 zh">回顧</div>
+            <h2 class="serif-display text-[32px] zh font-normal">歷史總覽</h2>
         </div>
-        <div>
-            <div class="section-header">各月明細</div>
-            <div class="card" id="hist-list"></div>
+        <div class="pt-2">
+            <div class="field-label mb-4 zh">近六個月趨勢</div>
+            <canvas id="trend" height="180"></canvas>
+        </div>
+        <div class="pt-6 divider-thick">
+            <div class="field-label mb-5 zh">各月明細</div>
+            <div id="hist-list" class="space-y-6"></div>
         </div>
     </div>
 </div>
 
 <!-- Bottom nav -->
-<div class="fixed bottom-0 inset-x-0 z-30 tab-bar" style="padding-bottom: env(safe-area-inset-bottom, 0px)">
+<div class="fixed bottom-0 inset-x-0 z-30" style="background: rgba(245, 241, 235, 0.92); backdrop-filter: blur(12px); border-top: 1px solid var(--rule);">
     <div class="max-w-md mx-auto flex">
         <button class="nav-tab active" data-p="main" onclick="goPage('main')">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 11-1.06 1.06L19.5 12.91V19a2 2 0 01-2 2h-3a1 1 0 01-1-1v-4h-3v4a1 1 0 01-1 1h-3a2 2 0 01-2-2v-6.09l-.66.68a.75.75 0 11-1.06-1.06l8.69-8.69z"/></svg>
-            <span class="text-[10px] font-medium">本月</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>
+            <span class="text-[10px] zh" style="letter-spacing:.1em">本月</span>
         </button>
         <button class="nav-tab" data-p="hist" onclick="goPage('hist')">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18a8 8 0 110-16 8 8 0 010 16zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
-            <span class="text-[10px] font-medium">歷史</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <span class="text-[10px] zh" style="letter-spacing:.1em">歷史</span>
         </button>
     </div>
 </div>
@@ -601,83 +615,76 @@ to   { opacity: 1; transform: translateY(0); }
 
 <div id="modal" class="modal-bg hidden" onclick="bgClick(event)">
     <div class="modal-box" id="mbox">
-        <div class="modal-grabber"></div>
         <div class="modal-header">
-            <button onclick="closeModal()" class="text-[17px]" style="color:var(--accent); background:none; border:none; font-family:var(--sys); cursor:pointer">取消</button>
-            <h3 class="text-[17px] font-semibold" id="m-title">新增紀錄</h3>
-            <button onclick="submitModal()" class="text-[17px] font-semibold" style="color:var(--accent); background:none; border:none; font-family:var(--sys); cursor:pointer" id="m-ok">完成</button>
+            <button onclick="closeModal()" class="modal-btn-text" style="color:var(--ink-soft)">取消</button>
+            <h3 class="text-[16px] font-semibold" id="m-title">新增紀錄</h3>
+            <button onclick="submitModal()" class="modal-btn-text font-semibold" style="color:var(--accent)" id="m-ok">確認</button>
         </div>
-        <div class="px-4 pt-2 pb-8">
+        <div class="modal-body">
             <div class="seg mb-6">
                 <div class="seg-btn on" id="seg-s" onclick="setType('single')">單筆</div>
                 <div class="seg-btn" id="seg-i" onclick="setType('installment')">分期</div>
             </div>
             <input type="hidden" id="m-cat"><input type="hidden" id="m-id"><input type="hidden" id="m-type" value="single">
-
-```
-        <div class="space-y-2">
-            <div class="section-header" style="padding:0 4px">項目資訊</div>
-            <div class="card overflow-hidden">
-                <div class="list-row">
-                    <span class="text-[15px] w-20" style="color:var(--label-2)">名稱</span>
-                    <input type="text" id="m-name" placeholder="如:房租、水電費" class="input-clean text-[15px] flex-1">
-                </div>
-                <div class="list-row">
-                    <span class="text-[15px] w-20" style="color:var(--label-2)">金額</span>
-                    <div class="flex items-baseline flex-1 gap-1">
-                        <span class="text-[15px]" style="color:var(--label-3)">$</span>
-                        <input type="number" id="m-amt" placeholder="0" class="input-clean text-[17px] tnum font-medium flex-1">
+            <div class="space-y-3.5">
+                <div>
+                    <label class="field-label block mb-1.5">項目</label>
+                    <div class="field">
+                        <input type="text" id="m-name" placeholder="如：房租、水電費" class="field-input text-[16px]">
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div id="inst-fields" class="hidden mt-5 space-y-2">
-            <div class="section-header" style="padding:0 4px">分期設定</div>
-            <div class="card overflow-hidden">
-                <div class="list-row">
-                    <span class="text-[15px] flex-1" style="color:var(--label-2)">總期數</span>
-                    <div class="flex items-baseline gap-1">
-                        <input type="number" id="m-periods" placeholder="12" class="input-clean text-[17px] tnum text-right font-medium" style="width:60px">
-                        <span class="text-[13px]" style="color:var(--label-3)">期</span>
+                <div>
+                    <label class="field-label block mb-1.5">金額</label>
+                    <div class="field flex items-baseline gap-1.5">
+                        <span class="text-[18px]" style="color:var(--ink-mute)">$</span>
+                        <input type="number" id="m-amt" placeholder="0" class="field-input text-[20px] font-medium tnum">
                     </div>
                 </div>
-                <div class="list-row">
-                    <span class="text-[15px] flex-1" style="color:var(--label-2)">本月第幾期</span>
-                    <div class="flex items-baseline gap-1">
-                        <input type="number" id="m-cur" value="1" class="input-clean text-[17px] tnum text-right font-medium" style="width:60px; color:var(--accent)">
-                        <span class="text-[13px]" style="color:var(--label-3)">期</span>
+                <div id="inst-fields" class="hidden space-y-3.5 pt-1">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="field-label block mb-1.5">總期數</label>
+                            <div class="field flex items-baseline gap-1.5">
+                                <input type="number" id="m-periods" placeholder="12" class="field-input text-[18px] tnum text-center">
+                                <span class="text-[12px]" style="color:var(--ink-mute)">期</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label block mb-1.5">本月第幾期</label>
+                            <div class="field flex items-baseline gap-1.5">
+                                <input type="number" id="m-cur" value="1" class="field-input text-[18px] tnum text-center" style="color:var(--accent)">
+                                <span class="text-[12px]" style="color:var(--ink-mute)">期</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[12px] leading-relaxed px-3 py-2.5 rounded-lg" style="color:var(--ink-soft); background:var(--accent-bg); border-left:2px solid var(--accent)" id="inst-info">
+                        請填入期數與第幾期
                     </div>
                 </div>
-            </div>
-            <div class="text-[13px] px-4 pt-2 leading-relaxed" style="color:var(--label-3)" id="inst-info">
-                請填入期數與第幾期
             </div>
         </div>
     </div>
-</div>
-```
-
 </div>
 
 <!-- CONFIRM -->
 
-<div id="confirm" class="hidden fixed inset-0 z-[60] flex items-center justify-center" style="background:rgba(0,0,0,.45)">
+<div id="confirm" class="hidden fixed inset-0 z-[60] flex items-center justify-center" style="background:rgba(31,30,29,.72)">
     <div class="cdlg">
-        <div class="px-4 pt-5 pb-4 text-center">
-            <h4 class="text-[17px] font-semibold mb-1">確定要刪除嗎?</h4>
-            <p class="text-[13px] leading-relaxed" style="color:var(--label-2)">
-                此動作無法復原。分期項目將移除所有月份紀錄。
+        <div class="px-6 py-7 text-center">
+            <div class="field-label mb-3 zh" style="color:var(--warn)">刪除確認</div>
+            <h4 class="serif text-[18px] zh font-medium mb-2">確定要刪除嗎？</h4>
+            <p class="text-[12px] zh leading-relaxed" style="color:var(--ink-mute)">
+                此動作無法復原。<br>分期項目將移除所有月份紀錄。
             </p>
         </div>
-        <div class="flex" style="border-top:0.5px solid var(--sep-strong)">
-            <button onclick="closeConfirm()" class="cdlg-btn flex-1" style="border-right:0.5px solid var(--sep-strong)">取消</button>
-            <button onclick="doDelete()" class="cdlg-btn flex-1 danger">刪除</button>
+        <div class="flex" style="border-top:1px solid var(--rule)">
+            <button onclick="closeConfirm()" class="flex-1 py-3.5 text-[13px] zh" style="border-right:1px solid var(--rule); color:var(--ink-soft); letter-spacing:.06em">取消</button>
+            <button onclick="doDelete()" class="flex-1 py-3.5 text-[13px] zh font-medium" style="color:var(--warn); letter-spacing:.06em">刪除</button>
         </div>
     </div>
 </div>
 
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast zh"></div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -705,7 +712,7 @@ const fmt = n => Math.round(n).toLocaleString('en-US');
 const addM = (ym,n) => { let[y,m]=ym.split('-').map(Number),d=new Date(y,m-1+n,1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; };
 const mDiff = (a,b) => { const da=new Date(a+'-01'),db=new Date(b+'-01'); return (db.getFullYear()-da.getFullYear())*12+(db.getMonth()-da.getMonth()); };
 const days = ym => { const[y,m]=ym.split('-'); return new Date(y,m,0).getDate(); };
-const mLbl = ym => { const[y,m]=ym.split('-'); return `${y}年${parseInt(m)}月`; };
+const mLbl = ym => { const[y,m]=ym.split('-'); return `${y} · ${parseInt(m).toString().padStart(2,'0')}`; };
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2400); }
 
 async function save() {
@@ -773,7 +780,7 @@ function calcMonth(m) {
             if(p<1||p>item.periods) return;
             const base=Math.floor(item.total/item.periods);
             amt = p===1 ? base+(item.total%item.periods) : base;
-            lbl = `第 ${p} / ${item.periods} 期`;
+            lbl = `${p} / ${item.periods} 期`;
         }
         list.push({...item,amt,lbl});
         if(item.cat==='living') liv+=amt;
@@ -793,16 +800,16 @@ function render() {
     const daily= livR>0 ? Math.round(livR/days(S.month)) : 0;
 
     const si=$('salary'); if(document.activeElement!==si) si.value=sal||'';
-    const svi=$('savings'); if(document.activeElement!==svi) svi.value=sav;
 
+    const svi=$('savings'); if(document.activeElement!==svi) svi.value=sav;
     $('sav-lbl').textContent = isC ? `自訂 · ${sal>0?Math.round(sav/sal*100):0}%` : '預設 30%';
     $('reset-sav-btn').classList.toggle('hidden',!isC);
 
     $('remain-val').textContent = livR>=0 ? `$${fmt(livR)}` : `−$${fmt(Math.abs(livR))}`;
-    $('remain-val').style.color = livR<0 ? 'var(--red)' : 'var(--label)';
+    $('remain-val').style.color = livR<0 ? 'var(--warn)' : 'var(--ink)';
     $('daily-val').textContent = `$${fmt(daily)}`;
     const sP=sal>0?Math.round(sav/sal*100):30, lP=sal>0?Math.round(liv/sal*100):0, iP=sal>0?Math.round(ins/sal*100):0;
-    $('used-pct').textContent = `${lP+iP}%`;
+    $('used-pct').innerHTML = `${lP+iP}<span class="text-[16px]" style="color:var(--ink-mute)">%</span>`;
     $('sav-pct').textContent=`${sP}%`; $('sav-amt').textContent=`$${fmt(sav)}`;
     $('liv-pct').textContent=`${lP}%`; $('liv-amt').textContent=`$${fmt(liv)}`;
     $('ins-pct').textContent=`${iP}%`; $('ins-amt').textContent=`$${fmt(ins)}`;
@@ -812,20 +819,22 @@ function render() {
     $('liv-spent').textContent=`$${fmt(liv)}`;
     const lbP=livB>0?Math.min(Math.round(liv/livB*100),100):0;
     $('liv-bar').style.width=`${lbP}%`;
-    const livOver = livR<0;
-    $('liv-bar').style.background = livOver ? 'var(--red)' : 'var(--orange)';
-    $('liv-remain-lbl').textContent = livOver ? `−$${fmt(Math.abs(livR))}` : `$${fmt(livR)}`;
-    $('liv-remain-lbl').style.color = livOver ? 'var(--red)' : 'var(--orange)';
+    const livOver = lbP>=100;
+    $('liv-bar').style.color = livOver ? 'var(--warn)' : 'var(--ink-soft)';
+    $('liv-bar').style.background = livOver ? 'var(--warn)' : 'var(--ink-soft)';
+    $('liv-remain-lbl').textContent=livR>=0?`剩餘 $${fmt(livR)}`:`超支 $${fmt(Math.abs(livR))}`;
+    $('liv-remain-lbl').style.color=livR<0?'var(--warn)':'var(--ink-soft)';
     renderList(list.filter(i=>i.cat==='living'), $('liv-list'), 'living');
 
     $('ins-budget-lbl').textContent=`預算 $${fmt(insB)}`;
     $('ins-spent').textContent=`$${fmt(ins)}`;
     const ibP=insB>0?Math.min(Math.round(ins/insB*100),100):0;
     $('ins-bar').style.width=`${ibP}%`;
-    const insOver = insR<0;
-    $('ins-bar').style.background = insOver ? 'var(--red)' : 'var(--green)';
-    $('ins-remain-lbl').textContent = insOver ? `−$${fmt(Math.abs(insR))}` : `$${fmt(insR)}`;
-    $('ins-remain-lbl').style.color = insOver ? 'var(--red)' : 'var(--green)';
+    const insOver = ibP>=100;
+    $('ins-bar').style.color = insOver ? 'var(--warn)' : 'var(--good)';
+    $('ins-bar').style.background = insOver ? 'var(--warn)' : 'var(--good)';
+    $('ins-remain-lbl').textContent=insR>=0?`剩餘 $${fmt(insR)}`:`超支 $${fmt(Math.abs(insR))}`;
+    $('ins-remain-lbl').style.color=insR<0?'var(--warn)':'var(--good)';
     renderList(list.filter(i=>i.cat==='insurance'), $('ins-list'), 'insurance');
 }
 
@@ -836,50 +845,42 @@ function updateDonut(data){
         type:'doughnut',
         data:{datasets:[{
             data,
-            backgroundColor:['#007AFF','#FF9500','#34C759','rgba(120,120,128,0.16)'],
+            backgroundColor:['#C15F3C','#45413C','#6B7F4F','#EEE9DD'],
             borderWidth:0,
-            hoverOffset:3,
-            borderRadius: 4,
-            spacing: 2
+            hoverOffset:2
         }]},
         options:{
-            cutout:'74%',
+            cutout:'78%',
             plugins:{legend:{display:false},tooltip:{enabled:false}},
-            animation:{duration:900, easing:'easeOutCubic'}
+            animation:{duration:800, easing:'easeOutCubic'}
         }
     });
 }
 
 function renderList(items, el, cat){
     if(!items.length){
-        el.innerHTML=`<div class="text-center py-8 text-[14px]" style="color:var(--label-3)">尚無紀錄</div>`;
+        el.innerHTML=`<div class="text-center py-6 text-[11px] zh" style="color:var(--ink-faint); letter-spacing:.2em">── 尚無紀錄 ──</div>`;
         return;
     }
-    const accent = cat==='living' ? 'var(--orange)' : 'var(--green)';
-    const accentBg = cat==='living' ? 'var(--orange-soft)' : 'var(--green-soft)';
-    const icon = cat==='living'
-        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h2"/></svg>'
-        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5 3.5 9.4 8 10 4.5-.6 8-5 8-10V6l-8-4z"/></svg>';
     el.innerHTML=items.map(item=>`
-    <div class="list-row" style="justify-content:space-between">
-        <div class="flex items-center gap-3 flex-1 min-w-0">
-            <div class="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0" style="background:${accentBg}; color:${accent}">
-                ${icon}
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="text-[15px] font-medium truncate">${item.name}</div>
-                <div class="text-[12px] mt-0.5" style="color:var(--label-3)">
-                    ${item.lbl}${item.type==='installment'?` · 總額 $${fmt(item.total)}`:''}
-                </div>
+    <div class="hover-row flex justify-between items-center py-3 px-1" style="border-bottom:1px solid var(--rule-soft)">
+        <div class="flex-1 min-w-0 pr-3">
+            <div class="serif text-[15px] truncate zh font-medium">${item.name}</div>
+            <div class="text-[10px] zh mt-0.5" style="color:var(--ink-mute); letter-spacing:.05em">
+                ${item.lbl}${item.type==='installment'?` · 總額 $${fmt(item.total)}`:''}
             </div>
         </div>
-        <div class="flex items-center gap-1 shrink-0">
-            <span class="text-[15px] font-semibold tnum mr-2">$${fmt(item.amt)}</span>
-            <button onclick="editItem('${item.id}')" class="btn-circle" style="width:28px; height:28px">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <div class="flex items-center gap-2 shrink-0">
+            <span class="serif tnum text-[15px]" style="color:var(--ink)">$${fmt(item.amt)}</span>
+            <button onclick="editItem('${item.id}')" class="icon-btn" title="編輯">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M4 20h4l11-11-4-4L4 16v4z"/><path d="M14 6l4 4"/>
+                </svg>
             </button>
-            <button onclick="delItem('${item.id}')" class="btn-circle" style="width:28px; height:28px; color:var(--red)">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <button onclick="delItem('${item.id}')" class="icon-btn danger" title="刪除">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M4 6h16M9 6V4h6v2M6 6l1 14h10l1-14"/>
+                </svg>
             </button>
         </div>
     </div>`).join('');
@@ -900,31 +901,31 @@ function renderHistory(){
     const getSpend=m=>{ const{liv,ins}=calcMonth(m); return liv+ins; };
     trendChart=new Chart(tCtx,{
         data:{
-            labels:t6.map(m=>{ const[,mo]=m.split('-'); return `${parseInt(mo)}月`; }),
+            labels:t6.map(m=>{ const[,mo]=m.split('-'); return parseInt(mo).toString().padStart(2,'0'); }),
             datasets:[
                 {
                     type:'line',
                     label:'薪資',
                     data:t6.map(m=>S.salaries[m]||0),
-                    borderColor:'#007AFF',
-                    backgroundColor:'rgba(0,122,255,.08)',
+                    borderColor:'#C15F3C',
+                    backgroundColor:'rgba(193,95,60,.06)',
                     fill:true,
                     tension:.35,
-                    pointBackgroundColor:'#fff',
-                    pointBorderColor:'#007AFF',
-                    pointBorderWidth:2,
+                    pointBackgroundColor:'#FAF7F2',
+                    pointBorderColor:'#C15F3C',
+                    pointBorderWidth:1.5,
                     pointRadius:4,
                     pointHoverRadius:6,
-                    borderWidth:2.5
+                    borderWidth:1.5
                 },
                 {
                     type:'bar',
                     label:'支出',
                     data:t6.map(getSpend),
-                    backgroundColor:'rgba(255,149,0,.85)',
-                    borderRadius:6,
+                    backgroundColor:'rgba(69,65,60,.5)',
+                    borderRadius:0,
                     borderSkipped:false,
-                    barPercentage:0.55
+                    barPercentage:0.5
                 }
             ]
         },
@@ -934,17 +935,17 @@ function renderHistory(){
                 legend:{
                     position:'bottom',
                     labels:{
-                        font:{family:"-apple-system, BlinkMacSystemFont, 'PingFang TC', sans-serif", weight:'500', size:12},
-                        padding:14, boxWidth:10, boxHeight:10, usePointStyle:true,
-                        color:'#3C3C43'
+                        font:{family:"-apple-system, BlinkMacSystemFont, 'PingFang TC', sans-serif", weight:'500', size:11},
+                        padding:14, boxWidth:8, boxHeight:8,
+                        color:'#45413C'
                     }
                 },
                 tooltip:{
-                    backgroundColor:'rgba(0,0,0,0.85)',
-                    titleFont:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:11, weight:'500'},
-                    bodyFont:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:14, weight:'600'},
+                    backgroundColor:'#1F1E1D',
+                    titleFont:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:10, weight:'500'},
+                    bodyFont:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:13, weight:'600'},
                     padding:10,
-                    cornerRadius:10,
+                    cornerRadius:6,
                     callbacks:{label:c=>` $${fmt(c.raw)}`}
                 }
             },
@@ -952,19 +953,19 @@ function renderHistory(){
                 y:{
                     ticks:{
                         callback:v=>`$${fmt(v)}`,
-                        font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:11},
-                        color:'#8E8E93'
+                        font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:10},
+                        color:'#8A857C'
                     },
-                    grid:{color:'rgba(60,60,67,0.1)', drawBorder:false},
+                    grid:{color:'rgba(229,223,211,.6)', drawBorder:false},
                     border:{display:false}
                 },
                 x:{
                     ticks:{
                         font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:11, weight:'500'},
-                        color:'#8E8E93'
+                        color:'#8A857C'
                     },
                     grid:{display:false},
-                    border:{display:false}
+                    border:{color:'#E5DFD3'}
                 }
             }
         }
@@ -972,7 +973,7 @@ function renderHistory(){
 
     const listEl=$('hist-list');
     if(!allM.length){
-        listEl.innerHTML='<div class="text-center py-10 text-[14px]" style="color:var(--label-3)">尚無歷史資料</div>';
+        listEl.innerHTML='<div class="text-center py-10 zh text-[12px]" style="color:var(--ink-faint); letter-spacing:.2em">── 尚無歷史 ──</div>';
         return;
     }
     listEl.innerHTML=allM.map(m=>{
@@ -981,27 +982,27 @@ function renderHistory(){
         const total=Math.round(liv+ins);
         const sRate=sal>0?Math.round((sal-total)/sal*100):0;
         const over=sal>0&&total>sal*0.7;
-        const badgeColor = over ? 'var(--red)' : 'var(--green)';
-        const badgeBg = over ? 'var(--red-soft)' : 'var(--green-soft)';
-        return `<div class="list-row" style="flex-direction:column; align-items:stretch; padding:14px 16px">
-            <div class="flex justify-between items-center mb-2.5">
-                <div class="text-[16px] font-semibold tnum">${mLbl(m)}</div>
-                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md" style="background:${badgeBg}; color:${badgeColor}">
+        return `<div class="hcard">
+            <div class="flex justify-between items-center mb-3">
+                <div>
+                    <div class="serif text-[17px] tnum zh font-medium">${mLbl(m)}</div>
+                </div>
+                <span class="tag zh" style="${over?'background:rgba(184,81,47,.1); color:var(--warn)':'background:var(--good-bg); color:var(--good)'}">
                     ${over?'超預算':`儲蓄 ${sRate}%`}
                 </span>
             </div>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="text-center py-2 rounded-lg" style="background:var(--fill)">
-                    <div class="text-[10px] font-medium uppercase tracking-wider mb-0.5" style="color:var(--label-3)">薪資</div>
-                    <div class="text-[14px] font-semibold tnum">$${fmt(sal)}</div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div>
+                    <div class="field-label zh mb-1">薪資</div>
+                    <div class="serif tnum text-[14px]">$${fmt(sal)}</div>
                 </div>
-                <div class="text-center py-2 rounded-lg" style="background:var(--orange-soft)">
-                    <div class="text-[10px] font-medium uppercase tracking-wider mb-0.5" style="color:var(--orange)">生活</div>
-                    <div class="text-[14px] font-semibold tnum">$${fmt(liv)}</div>
+                <div>
+                    <div class="field-label zh mb-1">生活</div>
+                    <div class="serif tnum text-[14px]" style="color:var(--ink-soft)">$${fmt(liv)}</div>
                 </div>
-                <div class="text-center py-2 rounded-lg" style="background:var(--green-soft)">
-                    <div class="text-[10px] font-medium uppercase tracking-wider mb-0.5" style="color:var(--green)">保險</div>
-                    <div class="text-[14px] font-semibold tnum">$${fmt(ins)}</div>
+                <div>
+                    <div class="field-label zh mb-1">保險</div>
+                    <div class="serif tnum text-[14px]" style="color:var(--good)">$${fmt(ins)}</div>
                 </div>
             </div>
         </div>`;
@@ -1019,15 +1020,12 @@ window.goPage = function(p){
 
 window.openModal = function(cat){
     $('m-cat').value=cat; $('m-id').value='';
-    $('m-title').textContent=cat==='living'?'新增生活支出':'新增保險項目';
-    $('m-ok').textContent='完成';
+    $('m-title').textContent=cat==='living'?'新增 — 生活':'新增 — 保險';
+    $('m-ok').textContent='新增';
     $('m-name').value=''; $('m-amt').value=''; $('m-periods').value=''; $('m-cur').value='1';
     setType(cat==='insurance'?'installment':'single');
     $('modal').classList.remove('hidden');
-    requestAnimationFrame(()=>{
-        $('modal').classList.add('show');
-        $('mbox').classList.add('open');
-    });
+    requestAnimationFrame(()=>$('mbox').classList.add('open'));
 };
 window.editItem = function(id){
     const item=S.items.find(i=>i.id===id); if(!item) return;
@@ -1037,16 +1035,9 @@ window.editItem = function(id){
     setType(item.type);
     if(item.type==='installment'){ $('m-periods').value=item.periods; $('m-cur').value=mDiff(item.startM,S.month)+1; }
     $('modal').classList.remove('hidden');
-    requestAnimationFrame(()=>{
-        $('modal').classList.add('show');
-        $('mbox').classList.add('open');
-    });
+    requestAnimationFrame(()=>$('mbox').classList.add('open'));
 };
-window.closeModal = function(){
-    $('mbox').classList.remove('open');
-    $('modal').classList.remove('show');
-    setTimeout(()=>$('modal').classList.add('hidden'),380);
-};
+window.closeModal = function(){ $('mbox').classList.remove('open'); setTimeout(()=>$('modal').classList.add('hidden'),350); };
 window.bgClick = function(e){ if(e.target===$('modal')) closeModal(); };
 window.setType = function(t){
     $('m-type').value=t;
@@ -1059,7 +1050,7 @@ function updateInfo(){
     const p=parseInt($('m-periods').value)||0, c=parseInt($('m-cur').value)||1;
     if(p>=2&&c>=1&&c<=p){
         const s=addM(S.month,-(c-1));
-        $('inst-info').textContent=`從 ${mLbl(s)} 開始，共 ${p} 期，至 ${mLbl(addM(s,p-1))} 結束`;
+        $('inst-info').textContent=`${mLbl(s)} 起，共 ${p} 期，至 ${mLbl(addM(s,p-1))}`;
     } else { $('inst-info').textContent='請填入期數與第幾期'; }
 }
 $('m-periods').addEventListener('input',updateInfo);
