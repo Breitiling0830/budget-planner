@@ -596,7 +596,7 @@ input[type=number] { -moz-appearance: textfield; }
                 <div class="ring-wrap">
                     <canvas id="donut" width="124" height="124"></canvas>
                     <div class="ring-center">
-                        <div class="field-label zh">已使用</div>
+                        <div class="field-label zh">已分配</div>
                         <div class="text-[24px] font-bold tnum mt-0.5" id="used-pct">0<span class="text-[15px]" style="color:var(--ink-mute)">%</span></div>
                     </div>
                 </div>
@@ -960,7 +960,7 @@ function render() {
     $('daily-val').textContent = `$${fmt(daily)}`;
     const sP=sal>0?Math.round(sav/sal*100):30, lP=sal>0?Math.round(liv/sal*100):0, iP=sal>0?Math.round(ins/sal*100):0;
     const freeP = Math.max(0, 100-sP-lP-iP);
-    $('used-pct').innerHTML = `${lP+iP}<span class="text-[15px]" style="color:var(--ink-mute)">%</span>`;
+    $('used-pct').innerHTML = `${sP+lP+iP}<span class="text-[15px]" style="color:var(--ink-mute)">%</span>`;
 
     // top strip
     $('cat-sav').textContent = `${sP}%`;
