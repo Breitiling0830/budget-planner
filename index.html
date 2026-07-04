@@ -1,3 +1,7 @@
+https://raw.githubusercontent.com/breitiling0830/budget-planner/main/index.html
+→ https://raw.githubusercontent.com/breitiling0830/budget-planner/main/index.html
+Content-Type: text/plain; charset=utf-8
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -6,6 +10,7 @@
 <title>Budget Planner</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 :root {
     /* Warm cream palette inspired by reference */
@@ -1053,19 +1058,34 @@ function renderHistory(){
         let c=item.startM; while(mDiff(c,end)>=0){ mSet.add(c); c=addM(c,1); }
     });
     const allM=[...mSet].sort().reverse();
-    const t6=allM.slice(0,6).reverse();
+    const nowD=new Date();
+    const curM=`${nowD.getFullYear()}-${String(nowD.getMonth()+1).padStart(2,'0')}`;
+    // 趨勢圖:只取實際有填薪資的月份,最近 6 個月
+    const t6=allM.filter(m=>S.salaries[m]>0).slice(0,6).reverse();
+    // 各月明細:排除未來月份,當月排最上面
+    const histM=allM.filter(m=>m<=curM);
 
     const tCtx=$('trend').getContext('2d');
     if(trendChart) trendChart.destroy();
     const getSpend=m=>{ const{liv,ins}=calcMonth(m); return liv+ins; };
+    const salData=t6.map(m=>S.salaries[m]||0);
+    const spendData=t6.map(getSpend);
+    const momLbl=(v,ctx)=>{
+        const arr=ctx.dataset.data, i=ctx.dataIndex;
+        if(i===0||!(arr[i-1]>0)) return fmt(v);
+        const p=(arr[i]-arr[i-1])/arr[i-1]*100;
+        return [fmt(v), `${p>=0?'+':''}${p.toFixed(1)}%`];
+    };
     trendChart=new Chart(tCtx,{
+        plugins: window.ChartDataLabels ? [ChartDataLabels] : [],
         data:{
             labels:t6.map(m=>{ const[,mo]=m.split('-'); return parseInt(mo).toString().padStart(2,'0'); }),
             datasets:[
                 {
                     type:'line',
                     label:'薪資',
-                    data:t6.map(m=>S.salaries[m]||0),
+                    data:salData,
+                    datalabels:{align:'top', offset:8, color:'#B08A2E'},
                     borderColor:'#E5B53D',
                     backgroundColor:'rgba(229,181,61,.1)',
                     fill:true,
@@ -1080,7 +1100,8 @@ function renderHistory(){
                 {
                     type:'bar',
                     label:'支出',
-                    data:t6.map(getSpend),
+                    data:spendData,
+                    datalabels:{anchor:'end', align:'top', offset:2, color:'#B0492F'},
                     backgroundColor:'rgba(217,96,63,.7)',
                     borderRadius:6,
                     borderSkipped:false,
@@ -1091,6 +1112,12 @@ function renderHistory(){
         options:{
             responsive:true,
             plugins:{
+                datalabels:{
+                    formatter:momLbl,
+                    textAlign:'center',
+                    clip:false,
+                    font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:9, weight:'700'}
+                },
                 legend:{
                     position:'bottom',
                     labels:{
@@ -1110,6 +1137,7 @@ function renderHistory(){
             },
             scales:{
                 y:{
+                    grace:'25%',
                     ticks:{
                         callback:v=>`$${fmt(v)}`,
                         font:{family:"-apple-system, BlinkMacSystemFont, sans-serif", size:10},
@@ -1131,11 +1159,11 @@ function renderHistory(){
     });
 
     const listEl=$('hist-list');
-    if(!allM.length){
+    if(!histM.length){
         listEl.innerHTML='<div class="text-center py-10 zh text-[12px]" style="color:var(--ink-faint); letter-spacing:.1em">尚無歷史紀錄</div>';
         return;
     }
-    listEl.innerHTML=allM.map(m=>{
+    listEl.innerHTML=histM.map(m=>{
         const sal=S.salaries[m]||0;
         const{liv,ins}=calcMonth(m);
         const total=Math.round(liv+ins);
